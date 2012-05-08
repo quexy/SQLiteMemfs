@@ -1,0 +1,164 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{6058977F-C2E1-4651-BCC0-66CFF2E709ED}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>System.Data.SQLite</RootNamespace>
+    <AssemblyName>System.Data.SQLite</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;SQLITE_STANDARD</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisLogFile>Debug\System.Data.SQLite.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;C:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisRuleDirectories>;C:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+    <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>..\bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisLogFile>Release\System.Data.SQLite.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;C:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisRuleDirectories>;C:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+    <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.XML" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\SQLite.NET\System.Data.SQLite\AssemblyInfo.cs">
+      <Link>Properties\AssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\SQLite.NET\System.Data.SQLite\LINQ\SQLiteFactory_Linq.cs">
+      <Link>SQLiteFactory_Linq.cs</Link>
+    </Compile>
+    <Compile Include="..\SQLite.NET\System.Data.SQLite\SQLite3.cs">
+      <Link>SQLite3.cs</Link>
+    </Compile>
+    <Compile Include="..\SQLite.NET\System.Data.SQLite\SQLite3_UTF16.cs">
+      <Link>SQLite3_UTF16.cs</Link>
+    </Compile>
+    <Compile Include="..\SQLite.NET\System.Data.SQLite\SQLiteBackup.cs">
+      <Link>SQLiteBackup.cs</Link>
+    </Compile>
+    <Compile Include="..\SQLite.NET\System.Data.SQLite\SQLiteBase.cs">
+      <Link>SQLiteBase.cs</Link>
+    </Compile>
+    <Compile Include="..\SQLite.NET\System.Data.SQLite\SQLiteCommand.cs">
+      <Link>SQLiteCommand.cs</Link>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="..\SQLite.NET\System.Data.SQLite\SQLiteCommandBuilder.cs">
+      <Link>SQLiteCommandBuilder.cs</Link>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="..\SQLite.NET\System.Data.SQLite\SQLiteConnection.cs">
+      <Link>SQLiteConnection.cs</Link>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="..\SQLite.NET\System.Data.SQLite\SQLiteConnectionPool.cs">
+      <Link>SQLiteConnectionPool.cs</Link>
+    </Compile>
+    <Compile Include="..\SQLite.NET\System.Data.SQLite\SQLiteConnectionStringBuilder.cs">
+      <Link>SQLiteConnectionStringBuilder.cs</Link>
+    </Compile>
+    <Compile Include="..\SQLite.NET\System.Data.SQLite\SQLiteConvert.cs">
+      <Link>SQLiteConvert.cs</Link>
+    </Compile>
+    <Compile Include="..\SQLite.NET\System.Data.SQLite\SQLiteDataAdapter.cs">
+      <Link>SQLiteDataAdapter.cs</Link>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="..\SQLite.NET\System.Data.SQLite\SQLiteDataReader.cs">
+      <Link>SQLiteDataReader.cs</Link>
+    </Compile>
+    <Compile Include="..\SQLite.NET\System.Data.SQLite\SQLiteDefineConstants.cs">
+      <Link>SQLiteDefineConstants.cs</Link>
+    </Compile>
+    <Compile Include="..\SQLite.NET\System.Data.SQLite\SQLiteEnlistment.cs">
+      <Link>SQLiteEnlistment.cs</Link>
+    </Compile>
+    <Compile Include="..\SQLite.NET\System.Data.SQLite\SQLiteException.cs">
+      <Link>SQLiteException.cs</Link>
+    </Compile>
+    <Compile Include="..\SQLite.NET\System.Data.SQLite\SQLiteFactory.cs">
+      <Link>SQLiteFactory.cs</Link>
+    </Compile>
+    <Compile Include="..\SQLite.NET\System.Data.SQLite\SQLiteFunction.cs">
+      <Link>SQLiteFunction.cs</Link>
+    </Compile>
+    <Compile Include="..\SQLite.NET\System.Data.SQLite\SQLiteFunctionAttribute.cs">
+      <Link>SQLiteFunctionAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\SQLite.NET\System.Data.SQLite\SQLiteKeyReader.cs">
+      <Link>SQLiteKeyReader.cs</Link>
+    </Compile>
+    <Compile Include="..\SQLite.NET\System.Data.SQLite\SQLiteLog.cs">
+      <Link>SQLiteLog.cs</Link>
+    </Compile>
+    <Compile Include="..\SQLite.NET\System.Data.SQLite\SQLiteMetaDataCollectionNames.cs">
+      <Link>SQLiteMetaDataCollectionNames.cs</Link>
+    </Compile>
+    <Compile Include="..\SQLite.NET\System.Data.SQLite\SQLiteParameter.cs">
+      <Link>SQLiteParameter.cs</Link>
+    </Compile>
+    <Compile Include="..\SQLite.NET\System.Data.SQLite\SQLiteParameterCollection.cs">
+      <Link>SQLiteParameterCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\SQLite.NET\System.Data.SQLite\SQLiteStatement.cs">
+      <Link>SQLiteStatement.cs</Link>
+    </Compile>
+    <Compile Include="..\SQLite.NET\System.Data.SQLite\SQLiteTransaction.cs">
+      <Link>SQLiteTransaction.cs</Link>
+    </Compile>
+    <Compile Include="..\SQLite.NET\System.Data.SQLite\SR.Designer.cs">
+      <Link>SR.Designer.cs</Link>
+    </Compile>
+    <Compile Include="..\SQLite.NET\System.Data.SQLite\UnsafeNativeMethods.cs">
+      <Link>UnsafeNativeMethods.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\SQLite.NET\System.Data.SQLite\SR.resx">
+      <Link>SR.resx</Link>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

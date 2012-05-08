@@ -1,0 +1,11 @@
+Debug
+ipch
+bin
+obj
+*.sdf
+*.opensdf
+*.suo
+*proj*.user
+/sqlite3/*
+/SQLite.NET/*
+

@@ -1,0 +1,36 @@
+
+http://www.sqlite.org/src/doc/trunk/src/test_demovfs.c
+
+	inmemorydatabase : idisposable
+		ctor
+			create & setup 'VfsObject'
+			register vfs object
+		dispose
+			unregister vfs object
+			destroy vfs object
+
+		byte getdatabase(filename, byte* data, int* size)
+			gets the content of the file from VfsObject
+
+	VfsObject : sqlite3_vfs (sqlite struct)
+		void *pAppData = NULL / FileObject*
+		FileObject *getFile(filename)
+
+
+	FileObject : sqlite3_file (sqlite struct)
+		filename = filename
+		byte* data;
+		int size, lenght;
+		ctor(filename)
+			lenght = 10240;
+			data = (data*)malloc(sizeof(byte)*lenght);
+			size = 0;
+		dtor
+			destroy()
+		destroy()
+			free(data)
+		
+
+
+http://www.sqlite.org/c3ref/vfs.html
+http://www.sqlite.org/c3ref/io_methods.html
