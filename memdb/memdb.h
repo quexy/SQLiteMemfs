@@ -1,5 +1,8 @@
 #pragma once
 
+#define MEMDB_EXTERN extern __declspec(dllexport)
+
+
 MEMDB_EXTERN int memdb_init();
 MEMDB_EXTERN int memdb_destroy();
 
