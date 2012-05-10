@@ -6,6 +6,3 @@ obj
 *.opensdf
 *.suo
 *proj*.user
-/sqlite3/*
-/SQLite.NET/*
-
