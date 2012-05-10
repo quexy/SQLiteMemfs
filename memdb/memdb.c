@@ -1,4 +1,3 @@
-#include "StdAfx.h"
 #include <stdlib.h>
 #include <string.h>
 
