@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Data.SQLite
 {
-    public class InMemoryDatabase : IDisposable
+    public sealed class InMemoryDatabase : IDisposable
     {
         [DllImport("memdb.dll", EntryPoint = "memdb_init", CallingConvention = CallingConvention.Cdecl)]
         private static extern int memdb_init();
