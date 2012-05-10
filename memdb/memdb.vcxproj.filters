@@ -21,9 +21,39 @@
     <ClInclude Include="sqlite3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="memdb_file_io.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="memdb_vfs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="file_object.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="vfs_object.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="memdb_file_data.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="memdb.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="memdb_file_io.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="memdb_vfs.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="file_object.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vfs_object.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="memdb_file_data.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

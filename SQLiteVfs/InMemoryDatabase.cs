@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Runtime.InteropServices;
 
 namespace System.Data.SQLite
@@ -11,23 +8,30 @@ namespace System.Data.SQLite
         [DllImport("memdb.dll", EntryPoint = "memdb_init", CallingConvention = CallingConvention.Cdecl)]
         private static extern int memdb_init();
 
-        [DllImport("memdb.dll", EntryPoint = "memdb_getdatasize", CallingConvention = CallingConvention.Cdecl)]
-        private static extern int memdb_getdatasize
+        [DllImport("memdb.dll", EntryPoint = "memdb_destroy", CallingConvention = CallingConvention.Cdecl)]
+        private static extern int memdb_destroy();
+
+        [DllImport("memdb.dll", EntryPoint = "memdb_getsize", CallingConvention = CallingConvention.Cdecl)]
+        private static extern int memdb_getsize
         (
-            [In, MarshalAs(UnmanagedType.LPStr)] string file,
-            [Out] out int size
+            [In, MarshalAs(UnmanagedType.LPStr)] string file
         );
 
         [DllImport("memdb.dll", EntryPoint = "memdb_getdata", CallingConvention = CallingConvention.Cdecl)]
         private static extern int memdb_getdata
         (
             [In, MarshalAs(UnmanagedType.LPStr)] string file,
-            [In, Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)] ref byte[] data,
-            [In, Out] ref int size
+            [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)] byte[] data,
+            [In] int size
         );
 
-        [DllImport("memdb.dll", EntryPoint = "memdb_destroy", CallingConvention = CallingConvention.Cdecl)]
-        private static extern int memdb_destroy();
+        [DllImport("memdb.dll", EntryPoint = "memdb_setdata", CallingConvention = CallingConvention.Cdecl)]
+        private static extern int memdb_setdata
+        (
+            [In, MarshalAs(UnmanagedType.LPStr)] string file,
+            [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)] byte[] data,
+            [In] int size
+        );
 
         private static readonly object sync = new object();
 
@@ -40,11 +44,15 @@ namespace System.Data.SQLite
         {
             lock (sync)
             {
-                int size = 0;
-                memdb_getdatasize(file, out size);
+                int size = memdb_getsize(file);
                 data = new byte[size];
-                memdb_getdata(file, ref data, ref size);
+                memdb_getdata(file, data, size);
             }
+        }
+
+        public void SetData(string file, byte[] data)
+        {
+            lock (sync) memdb_setdata(file, data, data.Length);
         }
 
         public void Dispose()

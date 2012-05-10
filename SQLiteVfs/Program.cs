@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Data.SQLite;
-using System.Runtime.InteropServices;
 
 namespace SQLiteVfs
 {
@@ -13,8 +9,12 @@ namespace SQLiteVfs
         {
             using (var db = new InMemoryDatabase())
             {
-                byte[] data;
-                db.GetData("kiskakas", out data);
+                var input = new byte[10];
+                for (int i = 0; i < input.Length; ++i) input[i] = (byte)i;
+                db.SetData("kiskakas", input);
+
+                byte[] output;
+                db.GetData("kiskakas", out output);
             }
         }
     }

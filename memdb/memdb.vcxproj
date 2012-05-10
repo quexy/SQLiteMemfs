@@ -52,7 +52,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;%(PreprocessorDefinitions);MEMDB_EXTERN=extern __declspec(dllexport)</PreprocessorDefinitions>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <AdditionalIncludeDirectories>$(OutDir)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -75,11 +75,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="memdb_file_data.h" />
+    <ClInclude Include="memdb_file_io.h" />
     <ClInclude Include="memdb.h" />
     <ClInclude Include="sqlite3.h" />
+    <ClInclude Include="file_object.h" />
+    <ClInclude Include="memdb_vfs.h" />
+    <ClInclude Include="vfs_object.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="file_object.c" />
+    <ClCompile Include="memdb_file_data.c" />
+    <ClCompile Include="memdb_file_io.c" />
     <ClCompile Include="memdb.c" />
+    <ClCompile Include="memdb_vfs.c" />
+    <ClCompile Include="vfs_object.c" />
   </ItemGroup>
   <ItemGroup>
     <None Include="sqlitevfs.txt" />

@@ -1,6 +1,8 @@
 #pragma once
 
-EXTERNAL int memdb_init();
-EXTERNAL int memdb_destroy();
-EXTERNAL int memdb_getdatasize(char* file, int* size);
-EXTERNAL int memdb_getdata(char* file, void** data, int* size);
+MEMDB_EXTERN int memdb_init();
+MEMDB_EXTERN int memdb_destroy();
+
+MEMDB_EXTERN int memdb_getsize(const char* zName);
+MEMDB_EXTERN int memdb_getdata(const char* zName, void* data, int nSize);
+MEMDB_EXTERN int memdb_setdata(const char* zName, void* data, int nSize);
