@@ -68,6 +68,7 @@ MEMDB_EXTERN int memdb_setdata(const char* zName, void* data, int nSize)
     int result, flags;
 
     file_object* pFile = (file_object*)malloc(sizeof(file_object));
+    if (pFile == NULL) return SQLITE_NOMEM;
     result = get_vfs_object()->xOpen(get_vfs_object(), zName, (sqlite3_file*)pFile, 0, &flags); 
     if (result != SQLITE_OK) return result;
 

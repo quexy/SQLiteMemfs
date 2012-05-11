@@ -45,6 +45,7 @@ int memdb_vfs_Delete(sqlite3_vfs* pVfs, const char* zName, int syncDir)
     memdb_file_data* pPrev;
     memdb_file_data* pFile;
 
+    pPrev = NULL;
     pFile = (memdb_file_data*)pVfs->pAppData;
     while(pFile != NULL)
     {
@@ -72,7 +73,7 @@ int memdb_vfs_Delete(sqlite3_vfs* pVfs, const char* zName, int syncDir)
 
 int memdb_vfs_Access(sqlite3_vfs* pVfs, const char* zName, int flags, int* pResOut)
 {
-    *pResOut = (0 == 0);
+    *pResOut = 1;
     return SQLITE_OK;
 }
 
