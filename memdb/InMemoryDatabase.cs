@@ -63,7 +63,12 @@ namespace System.Data.SQLite
 
         ~InMemoryDatabase()
         {
+            // When we're being reclaimed 'sync' is not guaranteed
+            // to exist any more, so we're "resurrecting" it
+            // for the duration of the finalizer. 
+            GC.ReRegisterForFinalize(sync);
             Dispose(false);
+            GC.KeepAlive(sync);
         }
 
         bool disposed = false;
@@ -72,12 +77,7 @@ namespace System.Data.SQLite
             if (!disposed)
             {
                 disposed = true;
-                if (disposing)
-                {
-                    // nop
-                }
-
-                memdb_destroy();
+                lock (sync) memdb_destroy();
             }
         }
     }
