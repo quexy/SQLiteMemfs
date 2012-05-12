@@ -14,12 +14,12 @@ int create_file_data(memdb_file_data* pData, const char* zName)
     memset(pData, 0, sizeof(memdb_file_data));
 
     nName = strlen(zName) + 1;
-    pData->zName = (char*)sqlite3_malloc(nName);
+    pData->zName = (char*)malloc(nName);
     if (pData->zName == NULL) { clear_file(pData); return SQLITE_NOMEM; }
     strcpy_s(pData->zName, nName, zName);
 
     pData->nLenght = 8192;
-    pData->pBuffer = sqlite3_malloc((size_t)(pData->nLenght));
+    pData->pBuffer = malloc((size_t)(pData->nLenght));
     if (pData->pBuffer == NULL) { clear_file(pData); return SQLITE_NOMEM; }
 
     return SQLITE_OK;
@@ -46,7 +46,7 @@ int delete_file_data(memdb_file_data* pData)
     pData->nSize = 0;
     pData->nLenght = 0;
     if (pData->pBuffer != NULL)
-        sqlite3_free(pData->pBuffer);
+        free(pData->pBuffer);
 
     return SQLITE_OK;
 }
@@ -55,7 +55,7 @@ int delete_file_data(memdb_file_data* pData)
 int destroy_file(memdb_file_data* pData)
 {
     clear_file(pData);
-    sqlite3_free(pData);
+    free(pData);
     return SQLITE_OK;
 }
 
@@ -63,8 +63,8 @@ int destroy_file(memdb_file_data* pData)
 void clear_file(memdb_file_data* pData)
 {
     if (pData->pBuffer != NULL)
-        sqlite3_free(pData->pBuffer);
+        free(pData->pBuffer);
 
     if (pData->zName != NULL)
-        sqlite3_free(pData->zName);
+        free(pData->zName);
 }

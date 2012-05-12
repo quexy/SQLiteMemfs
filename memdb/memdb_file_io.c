@@ -30,10 +30,10 @@ int memdb_io_Write(sqlite3_file* pFile, const void* pBuf, int iAmt, sqlite3_int6
     newLength = (sqlite3_int64)(newSize * 1.1);
     if (pData->nLenght < newSize)
     {
-        void* newBuffer = (void*)sqlite3_malloc((size_t)newLength);
+        void* newBuffer = (void*)malloc((size_t)newLength);
         if (newBuffer == NULL) return SQLITE_NOMEM;
         memcpy_s(newBuffer, (rsize_t)newLength, pData->pBuffer, (rsize_t)pData->nSize);
-        sqlite3_free(pData->pBuffer);
+        free(pData->pBuffer);
         pData->pBuffer = newBuffer;
         pData->nLenght = newLength;
     }

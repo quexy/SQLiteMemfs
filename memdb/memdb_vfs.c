@@ -26,7 +26,7 @@ int memdb_vfs_Open(sqlite3_vfs* pVfs, const char* zName, sqlite3_file* pFile, in
     pObject->pData = find_file_data(pVfs, zName);
     if (pObject->pData == NULL)
     {
-        pObject->pData = (memdb_file_data*)sqlite3_malloc(sizeof(memdb_file_data));
+        pObject->pData = (memdb_file_data*)malloc(sizeof(memdb_file_data));
         if(pObject->pData == NULL) return SQLITE_NOMEM;
 
         result = create_file_data(pObject->pData, zName);
