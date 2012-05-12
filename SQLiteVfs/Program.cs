@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Data.SQLite;
 using System.Text;
 
@@ -18,13 +17,11 @@ namespace SQLiteVfs
                 db.GetData("X:\\db1", out data);
                 db.SetData("X:\\db2", data);
 
-                string str1 = new String(data.Select(b => (char)b).ToArray());
                 InsertData("X:\\db2");
 
                 db.GetData("X:\\db2", out data);
                 db.SetData("X:\\db3", data);
 
-                var str2 = new String(data.Select(b => (char)b).ToArray());
                 ReadData("X:\\db3");
             }
         }
@@ -60,7 +57,7 @@ namespace SQLiteVfs
                         command.Parameters.Add(new SQLiteParameter("@id", guid));
                         command.Parameters.Add(new SQLiteParameter("@title", guid.ToString("B")));
                         var data = "".PadRight(i, (i - 1).ToString()[0]).PadLeft(10, '.');
-                        command.Parameters.Add(new SQLiteParameter("@data", Encoding.ASCII.GetBytes(data)));
+                        command.Parameters.Add(new SQLiteParameter("@data", Encoding.Unicode.GetBytes(data)));
                         command.ExecuteNonQuery();
                     }
                 }
@@ -84,7 +81,7 @@ namespace SQLiteVfs
                             Console.WriteLine("| {0} | {1} | {2} |",
                                 reader.GetGuid(0),
                                 reader.GetString(1),
-                                Encoding.ASCII.GetString((byte[])reader.GetValue(2))
+                                Encoding.Unicode.GetString((byte[])reader.GetValue(2))
                             );
                         }
                     }
