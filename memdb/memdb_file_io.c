@@ -13,11 +13,15 @@ int memdb_io_Close(sqlite3_file* pFile)
 
 int memdb_io_Read(sqlite3_file* pFile, void* pBuf, int iAmt, sqlite3_int64 iOfst)
 {
+    int nAmount = 0;
     memdb_file_data* pData = ((file_object*)pFile)->pData;
     if (pData->iDeleted == 1) return SQLITE_IOERR;
 
-    memcpy_s(pBuf, iAmt, ((char*)(pData->pBuffer)) + iOfst, (rsize_t)(pData->nSize - iOfst));
-    return SQLITE_OK;
+    nAmount = (int)(pData->nSize - iOfst);
+    if (nAmount < 0) return SQLITE_IOERR_SHORT_READ;
+
+    memcpy_s(pBuf, iAmt, ((char*)(pData->pBuffer)) + iOfst, ((iAmt < nAmount) ? iAmt : nAmount));
+    return (iAmt <= nAmount) ? SQLITE_OK : SQLITE_IOERR_SHORT_READ;
 }
 
 int memdb_io_Write(sqlite3_file* pFile, const void* pBuf, int iAmt, sqlite3_int64 iOfst)
@@ -32,8 +36,11 @@ int memdb_io_Write(sqlite3_file* pFile, const void* pBuf, int iAmt, sqlite3_int6
     {
         void* newBuffer = (void*)malloc((size_t)newLength);
         if (newBuffer == NULL) return SQLITE_NOMEM;
-        memcpy_s(newBuffer, (rsize_t)newLength, pData->pBuffer, (rsize_t)pData->nSize);
-        free(pData->pBuffer);
+        if (pData->pBuffer != NULL)
+        {
+            memcpy_s(newBuffer, (rsize_t)newLength, pData->pBuffer, (rsize_t)pData->nSize);
+            free(pData->pBuffer);
+        }
         pData->pBuffer = newBuffer;
         pData->nLenght = newLength;
     }

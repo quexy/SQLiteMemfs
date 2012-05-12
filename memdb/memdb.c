@@ -72,13 +72,13 @@ MEMDB_EXTERN int memdb_setdata(const char* zName, void* data, int nSize)
     if (pFile == NULL) return SQLITE_NOMEM;
 
     result = get_vfs_object()->xOpen(get_vfs_object(), zName, (sqlite3_file*)pFile, 0, &flags); 
-    if (result != SQLITE_OK) return result;
+    if (result != SQLITE_OK) { free(pFile); return result; }
 
     result = pFile->base.pMethods->xWrite((sqlite3_file*)pFile, data, nSize, 0);
-    if (result != SQLITE_OK) return result;
+    if (result != SQLITE_OK) { free(pFile); return result; }
 
     result = pFile->base.pMethods->xClose((sqlite3_file*)pFile);
-    if (result != SQLITE_OK) return result;
+    if (result != SQLITE_OK) { free(pFile); return result; }
 
     free(pFile); return SQLITE_OK;     
 }

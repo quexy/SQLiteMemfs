@@ -47,6 +47,7 @@ int delete_file_data(memdb_file_data* pData)
     pData->nLenght = 0;
     if (pData->pBuffer != NULL)
         free(pData->pBuffer);
+    pData->pBuffer = NULL;
 
     return SQLITE_OK;
 }
@@ -64,7 +65,9 @@ void clear_file(memdb_file_data* pData)
 {
     if (pData->pBuffer != NULL)
         free(pData->pBuffer);
+    pData->pBuffer = NULL;
 
     if (pData->zName != NULL)
         free(pData->zName);
+    pData->zName = NULL;
 }
