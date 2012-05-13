@@ -43,7 +43,7 @@ namespace SQLiteVfs
 
         private static void InsertData(string dbFile)
         {
-            var connStr = string.Format("Data Source={0};Version=3;FailIfMissing=False;", dbFile);
+            var connStr = string.Format("Data Source={0};Version=3;FailIfMissing=True;", dbFile);
             using (var connection = new SQLiteConnection(connStr))
             {
                 connection.Open();
