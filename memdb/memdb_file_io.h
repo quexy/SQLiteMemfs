@@ -2,6 +2,7 @@
 
 #include "sqlite3.h"
 
+
 int memdb_io_Close(sqlite3_file*);
 int memdb_io_Read(sqlite3_file*, void*, int iAmt, sqlite3_int64 iOfst);
 int memdb_io_Write(sqlite3_file*, const void*, int iAmt, sqlite3_int64 iOfst);

@@ -6,4 +6,3 @@
 #define SQLITE_API extern __declspec(dllexport)
 
 #include "..\sqlite3\sqlite3.h"
-

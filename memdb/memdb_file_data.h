@@ -5,7 +5,6 @@
 
 
 typedef struct memdb_file_data memdb_file_data;
-
 struct memdb_file_data
 {
     char* zName;
@@ -18,7 +17,7 @@ struct memdb_file_data
 };
 
 
- int create_file_data(memdb_file_data* pData, const char* zName);
+int create_file_data(memdb_file_data* pData, const char* zName);
 
 memdb_file_data* find_file_data(sqlite3_vfs* pVfs, const char* zName);
 

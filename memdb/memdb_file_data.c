@@ -1,11 +1,13 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "sqlite3.h"
+
 #include "memdb_file_data.h"
 
 
-void clear_file(memdb_file_data* pData);
 
+void clear_file(memdb_file_data* pData);
 
 
 int create_file_data(memdb_file_data* pData, const char* zName)

@@ -3,9 +3,10 @@
 
 #include "sqlite3.h"
 
+#include "file_object.h"
 #include "memdb.h"
 #include "vfs_object.h"
-#include "file_object.h"
+
 
 
 static int refCount = 0;
@@ -80,5 +81,5 @@ MEMDB_EXTERN int memdb_setdata(const char* zName, void* data, int nSize)
     result = pFile->base.pMethods->xClose((sqlite3_file*)pFile);
     if (result != SQLITE_OK) { free(pFile); return result; }
 
-    free(pFile); return SQLITE_OK;     
+    free(pFile); return SQLITE_OK;
 }

@@ -1,13 +1,15 @@
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
 
 #include <Windows.h>
 
+#include "sqlite3.h"
+
+#include "file_object.h"
 #include "memdb_file_data.h"
 #include "memdb_file_io.h"
-#include "file_object.h"
 #include "memdb_vfs.h"
+
 
 
 /* own function implementations */
@@ -37,9 +39,10 @@ int memdb_vfs_Open(sqlite3_vfs* pVfs, const char* zName, sqlite3_file* pFile, in
     pObject->base.pMethods = get_io_methods();
     pObject->pData->iDeleted = 0;
     pObject->pData->nRef += 1;
-    
+
     return SQLITE_OK;
 }
+
 
 int memdb_vfs_Delete(sqlite3_vfs* pVfs, const char* zName, int syncDir)
 {
@@ -72,6 +75,7 @@ int memdb_vfs_Delete(sqlite3_vfs* pVfs, const char* zName, int syncDir)
     return SQLITE_OK;
 }
 
+
 int memdb_vfs_Access(sqlite3_vfs* pVfs, const char* zName, int flags, int* pResOut)
 {
     if ( flags == 0 || (flags & SQLITE_ACCESS_EXISTS) == SQLITE_ACCESS_EXISTS)
@@ -80,6 +84,7 @@ int memdb_vfs_Access(sqlite3_vfs* pVfs, const char* zName, int flags, int* pResO
         *pResOut = 1;
     return SQLITE_OK;
 }
+
 
 int memdb_vfs_FullPathname(sqlite3_vfs* pVfs, const char* zName, int nOut, char* zOut)
 {
@@ -96,20 +101,24 @@ int memdb_vfs_Randomness(sqlite3_vfs* pVfs, int nByte, char* zOut)
     return pVfs->pNext->xRandomness(pVfs->pNext, nByte, zOut);
 }
 
+
 int memdb_vfs_Sleep(sqlite3_vfs* pVfs, int microsec)
 {
     return pVfs->pNext->xSleep(pVfs->pNext, microsec);
 }
+
 
 int memdb_vfs_CurrentTime(sqlite3_vfs* pVfs, double* prNow)
 {
     return pVfs->pNext->xCurrentTime(pVfs->pNext, prNow);
 }
 
+
 int memdb_vfs_GetLastError(sqlite3_vfs* pVfs, int nBuf, char* zBuf)
 {
     return pVfs->pNext->xGetLastError(pVfs->pNext, nBuf, zBuf);
 }
+
 
 int memdb_vfs_CurrentTimeInt64(sqlite3_vfs* pVfs, sqlite3_int64* piNow)
 {
@@ -125,15 +134,18 @@ void* memdb_vfs_DlOpen(sqlite3_vfs* pVfs, const char* zBuf)
     return pVfs->pNext->xDlOpen(pVfs->pNext, zBuf);
 }
 
+
 void memdb_vfs_DlError(sqlite3_vfs* pVfs, int nByte, char* zErrMsg)
 {
     pVfs->pNext->xDlError(pVfs->pNext, nByte, zErrMsg);
 }
 
+
 void (*memdb_vfs_DlSym(sqlite3_vfs* pVfs, void* zBuf, const char* zName))(void)
 {
     return pVfs->pNext->xDlSym(pVfs->pNext, zBuf, zName);
 }
+
 
 void memdb_vfs_DlClose(sqlite3_vfs* pVfs, void* zBuf)
 {

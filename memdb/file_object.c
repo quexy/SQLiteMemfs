@@ -1,8 +1,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "sqlite3.h"
+
 #include "file_object.h"
 #include "memdb_file_io.h"
+
 
 
 static sqlite3_io_methods memdb_io_methods = {

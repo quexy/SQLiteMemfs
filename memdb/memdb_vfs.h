@@ -2,6 +2,7 @@
 
 #include "sqlite3.h"
 
+
 /* own function implementations */
 int memdb_vfs_Open(sqlite3_vfs* pVfs, const char* zName, sqlite3_file* pFile, int flags, int* pOutFlags);
 int memdb_vfs_Delete(sqlite3_vfs* pVfs, const char* zName, int syncDir);

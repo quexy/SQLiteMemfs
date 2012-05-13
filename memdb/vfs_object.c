@@ -1,6 +1,10 @@
-#include "vfs_object.h"
-#include "memdb_vfs.h"
+#include "sqlite3.h"
+
 #include "file_object.h"
+#include "memdb_vfs.h"
+#include "vfs_object.h"
+
+
 
 static sqlite3_vfs vfs_object = {
     1,

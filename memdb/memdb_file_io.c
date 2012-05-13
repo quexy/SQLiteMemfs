@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "sqlite3.h"
+
 #include "file_object.h"
 
 
@@ -10,6 +12,7 @@ int memdb_io_Close(sqlite3_file* pFile)
     ((file_object*)pFile)->pData->nRef -= 1;
     return SQLITE_OK;
 }
+
 
 int memdb_io_Read(sqlite3_file* pFile, void* pBuf, int iAmt, sqlite3_int64 iOfst)
 {
@@ -23,6 +26,7 @@ int memdb_io_Read(sqlite3_file* pFile, void* pBuf, int iAmt, sqlite3_int64 iOfst
     memcpy_s(pBuf, iAmt, ((char*)(pData->pBuffer)) + iOfst, ((iAmt < nAmount) ? iAmt : nAmount));
     return (iAmt <= nAmount) ? SQLITE_OK : SQLITE_IOERR_SHORT_READ;
 }
+
 
 int memdb_io_Write(sqlite3_file* pFile, const void* pBuf, int iAmt, sqlite3_int64 iOfst)
 {
@@ -44,12 +48,13 @@ int memdb_io_Write(sqlite3_file* pFile, const void* pBuf, int iAmt, sqlite3_int6
         pData->pBuffer = newBuffer;
         pData->nLenght = newLength;
     }
-    
+
     memcpy_s(((char*)(pData->pBuffer)) + iOfst, (rsize_t)(pData->nLenght - iOfst), pBuf, iAmt);
     pData->nSize = (pData->nSize < newSize) ? newSize : pData->nSize;
 
     return SQLITE_OK;
 }
+
 
 int memdb_io_Truncate(sqlite3_file* pFile, sqlite3_int64 size)
 {
@@ -57,10 +62,12 @@ int memdb_io_Truncate(sqlite3_file* pFile, sqlite3_int64 size)
     return SQLITE_OK;
 }
 
+
 int memdb_io_Sync(sqlite3_file* pFile, int flags)
 {
     return SQLITE_OK;
 }
+
 
 int memdb_io_FileSize(sqlite3_file* pFile, sqlite3_int64 *pSize)
 {
@@ -68,15 +75,18 @@ int memdb_io_FileSize(sqlite3_file* pFile, sqlite3_int64 *pSize)
     return SQLITE_OK;
 }
 
+
 int memdb_io_Lock(sqlite3_file* pFile, int nLock)
 {
     return SQLITE_OK;
 }
 
+
 int memdb_io_Unlock(sqlite3_file* pFile, int nLock)
 {
     return SQLITE_OK;
 }
+
 
 int memdb_io_CheckReservedLock(sqlite3_file* pFile, int *pResOut)
 {
@@ -84,15 +94,18 @@ int memdb_io_CheckReservedLock(sqlite3_file* pFile, int *pResOut)
     return SQLITE_OK;
 }
 
+
 int memdb_io_FileControl(sqlite3_file* pFile, int op, void *pArg)
 {
     return SQLITE_OK;
 }
 
+
 int memdb_io_SectorSize(sqlite3_file* pFile)
 {
     return 0;
 }
+
 
 int memdb_io_DeviceCharacteristics(sqlite3_file* pFile)
 {
