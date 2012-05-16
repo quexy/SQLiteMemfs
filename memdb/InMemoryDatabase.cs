@@ -22,7 +22,8 @@ namespace System.Data.SQLite
         (
             [In, MarshalAs(UnmanagedType.LPStr)] string file,
             [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)] byte[] data,
-            [In] int size
+            [In] int size,
+            [In] long offset
         );
 
         [DllImport("memdb.dll", EntryPoint = "memdb_setdata", CallingConvention = CallingConvention.Cdecl)]
@@ -30,7 +31,8 @@ namespace System.Data.SQLite
         (
             [In, MarshalAs(UnmanagedType.LPStr)] string file,
             [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)] byte[] data,
-            [In] int size
+            [In] int size,
+            [In] long offset
         );
 
         private static readonly object sync = new object();
@@ -46,13 +48,13 @@ namespace System.Data.SQLite
             {
                 int size = memdb_getsize(file);
                 data = new byte[size];
-                memdb_getdata(file, data, size);
+                memdb_getdata(file, data, size, 0);
             }
         }
 
         public void SetData(string file, byte[] data)
         {
-            lock (sync) memdb_setdata(file, data, data.Length);
+            lock (sync) memdb_setdata(file, data, data.Length, 0);
         }
 
         public void Dispose()

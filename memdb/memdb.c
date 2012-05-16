@@ -55,31 +55,48 @@ MEMDB_EXTERN int memdb_getsize(const char* zName)
 }
 
 
-MEMDB_EXTERN int memdb_getdata(const char* zName, void* data, int nSize)
+MEMDB_EXTERN int memdb_getdata(const char* zName, void* data, int nSize, __int64 iOfst)
 {
-    memdb_file_data* pData = find_file_data(get_vfs_object(), zName);
-    if (pData == NULL || pData->iDeleted == 1) return 0;
+    int result, flags;
+    file_object* pFile = NULL;
+    flags = 0; result = 0;
 
-    memcpy_s(data, nSize, pData->pBuffer, (rsize_t)(pData->nSize));
-    return (int)((nSize < pData->nSize) ? pData->nSize : nSize);
+    pFile = (file_object*)malloc(sizeof(file_object));
+    if (pFile == NULL) return result;
+
+    get_vfs_object()->xOpen(get_vfs_object(), zName, (sqlite3_file*)pFile, SQLITE_OPEN_READONLY, &flags); 
+    if (result != SQLITE_OK) { free(pFile); return result; }
+
+    pFile->base.pMethods->xRead((sqlite3_file*)pFile, data, nSize, iOfst);
+
+    result = (int)(pFile->pData->nSize - iOfst);
+    if (result > nSize) result = nSize;
+    if (result < 0) result = 0;
+
+    pFile->base.pMethods->xClose((sqlite3_file*)pFile);
+    free(pFile);
+
+    return result;
 }
 
 
-MEMDB_EXTERN int memdb_setdata(const char* zName, void* data, int nSize)
+MEMDB_EXTERN int memdb_setdata(const char* zName, void* data, int nSize, __int64 iOfst)
 {
     int result, flags;
+    file_object* pFile = NULL;
+    flags = 0; result = 0;
 
-    file_object* pFile = (file_object*)malloc(sizeof(file_object));
-    if (pFile == NULL) return SQLITE_NOMEM;
+    pFile = (file_object*)malloc(sizeof(file_object));
+    if (pFile == NULL) return result;
 
-    result = get_vfs_object()->xOpen(get_vfs_object(), zName, (sqlite3_file*)pFile, 0, &flags); 
+    get_vfs_object()->xOpen(get_vfs_object(), zName, (sqlite3_file*)pFile, SQLITE_OPEN_CREATE, &flags); 
     if (result != SQLITE_OK) { free(pFile); return result; }
 
-    result = pFile->base.pMethods->xWrite((sqlite3_file*)pFile, data, nSize, 0);
-    if (result != SQLITE_OK) { free(pFile); return result; }
+    pFile->base.pMethods->xWrite((sqlite3_file*)pFile, data, nSize, iOfst);
+    if (result == SQLITE_OK) { result = nSize; }
 
-    result = pFile->base.pMethods->xClose((sqlite3_file*)pFile);
-    if (result != SQLITE_OK) { free(pFile); return result; }
-
-    free(pFile); return SQLITE_OK;
+    pFile->base.pMethods->xClose((sqlite3_file*)pFile);
+    free(pFile);
+    
+    return result;
 }

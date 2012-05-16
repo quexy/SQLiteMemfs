@@ -25,6 +25,10 @@ int memdb_vfs_Open(sqlite3_vfs* pVfs, const char* zName, sqlite3_file* pFile, in
     if (zName == 0) return SQLITE_IOERR;
 
     pObject->pData = find_file_data(pVfs, zName);
+    if ((pObject->pData == NULL || pObject->pData->iDeleted == 1)
+        && (flags != 0 && (flags & SQLITE_OPEN_CREATE) == 0))
+        return SQLITE_IOERR;
+
     if (pObject->pData == NULL)
     {
         pObject->pData = (memdb_file_data*)malloc(sizeof(memdb_file_data));
