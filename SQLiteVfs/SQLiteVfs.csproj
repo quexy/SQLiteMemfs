@@ -48,6 +48,9 @@
     <Compile Include="..\memdb\InMemoryDatabase.cs">
       <Link>InMemoryDatabase.cs</Link>
     </Compile>
+    <Compile Include="..\memdb\MemdbStream.cs">
+      <Link>MemdbStream.cs</Link>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

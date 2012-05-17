@@ -99,6 +99,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="InMemoryDatabase.cs" />
+    <None Include="MemdbStream.cs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

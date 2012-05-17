@@ -45,27 +45,35 @@ MEMDB_EXTERN int memdb_destroy()
 }
 
 
-MEMDB_EXTERN int memdb_getsize(const char* zName)
+MEMDB_EXTERN __int64 memdb_getsize(const char* zName)
 {
     memdb_file_data* pData = find_file_data(get_vfs_object(), zName);
     if (pData == NULL || pData->iDeleted == 1)
         return 0;
     else // found and not deleted
-        return (int)pData->nSize;
+        return pData->nSize;
 }
 
 
-MEMDB_EXTERN int memdb_getdata(const char* zName, void* data, int nSize, __int64 iOfst)
+MEMDB_EXTERN void memdb_setsize(const char* zName, __int64 nSize)
+{
+    memdb_file_data* pData = find_file_data(get_vfs_object(), zName);
+    if (pData != NULL || pData->iDeleted == 0)
+        pData->nSize = nSize;
+}
+
+
+MEMDB_EXTERN int memdb_readdata(const char* zName, void* data, int nSize, __int64 iOfst)
 {
     int result, flags;
     file_object* pFile = NULL;
     flags = 0; result = 0;
 
     pFile = (file_object*)malloc(sizeof(file_object));
-    if (pFile == NULL) return result;
+    if (pFile == NULL) return 0;
 
-    get_vfs_object()->xOpen(get_vfs_object(), zName, (sqlite3_file*)pFile, SQLITE_OPEN_READONLY, &flags); 
-    if (result != SQLITE_OK) { free(pFile); return result; }
+    result = get_vfs_object()->xOpen(get_vfs_object(), zName, (sqlite3_file*)pFile, SQLITE_OPEN_READONLY, &flags); 
+    if (result != SQLITE_OK) { free(pFile); return 0; }
 
     pFile->base.pMethods->xRead((sqlite3_file*)pFile, data, nSize, iOfst);
 
@@ -80,7 +88,7 @@ MEMDB_EXTERN int memdb_getdata(const char* zName, void* data, int nSize, __int64
 }
 
 
-MEMDB_EXTERN int memdb_setdata(const char* zName, void* data, int nSize, __int64 iOfst)
+MEMDB_EXTERN int memdb_writedata(const char* zName, void* data, int nSize, __int64 iOfst)
 {
     int result, flags;
     file_object* pFile = NULL;

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Runtime.InteropServices;
 
 namespace System.Data.SQLite
@@ -12,13 +13,20 @@ namespace System.Data.SQLite
         private static extern int memdb_destroy();
 
         [DllImport("memdb.dll", EntryPoint = "memdb_getsize", CallingConvention = CallingConvention.Cdecl)]
-        private static extern int memdb_getsize
+        private static extern long memdb_getsize
         (
             [In, MarshalAs(UnmanagedType.LPStr)] string file
         );
 
-        [DllImport("memdb.dll", EntryPoint = "memdb_getdata", CallingConvention = CallingConvention.Cdecl)]
-        private static extern int memdb_getdata
+        [DllImport("memdb.dll", EntryPoint = "memdb_setsize", CallingConvention = CallingConvention.Cdecl)]
+        private static extern void memdb_setsize
+        (
+            [In, MarshalAs(UnmanagedType.LPStr)] string file,
+            [In] long size
+        );
+
+        [DllImport("memdb.dll", EntryPoint = "memdb_readdata", CallingConvention = CallingConvention.Cdecl)]
+        private static extern int memdb_readdata
         (
             [In, MarshalAs(UnmanagedType.LPStr)] string file,
             [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)] byte[] data,
@@ -26,35 +34,63 @@ namespace System.Data.SQLite
             [In] long offset
         );
 
-        [DllImport("memdb.dll", EntryPoint = "memdb_setdata", CallingConvention = CallingConvention.Cdecl)]
-        private static extern int memdb_setdata
+        [DllImport("memdb.dll", EntryPoint = "memdb_writedata", CallingConvention = CallingConvention.Cdecl)]
+        private static extern int memdb_writedata
         (
             [In, MarshalAs(UnmanagedType.LPStr)] string file,
             [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)] byte[] data,
             [In] int size,
             [In] long offset
         );
-
-        private static readonly object sync = new object();
 
         public InMemoryDatabase()
         {
-            lock (sync) memdb_init();
+            memdb_init();
+        }
+
+        public long GetSize(string file)
+        {
+            return memdb_getsize(file);
+        }
+
+        public void SetSize(string file, long size)
+        {
+            memdb_setsize(file, size);
         }
 
         public void GetData(string file, out byte[] data)
         {
-            lock (sync)
+            long offset = 0;
+            long size = memdb_getsize(file);
+
+            data = new byte[size];
+            while (size > int.MaxValue)
             {
-                int size = memdb_getsize(file);
-                data = new byte[size];
-                memdb_getdata(file, data, size, 0);
+                memdb_readdata(file, data, int.MaxValue, offset);
+                offset += int.MaxValue;
+                size -= offset;
             }
+            memdb_readdata(file, data, (int)size, offset);
+        }
+
+        public int ReadData(string file, byte[] buffer, int offset, int count)
+        {
+            return memdb_readdata(file, buffer, count, offset);
         }
 
         public void SetData(string file, byte[] data)
         {
-            lock (sync) memdb_setdata(file, data, data.Length, 0);
+            memdb_writedata(file, data, data.Length, 0);
+        }
+
+        public int WriteData(string file, byte[] buffer, int offset, int count)
+        {
+            return memdb_writedata(file, buffer, count, offset);
+        }
+
+        public Stream GetStream(string file)
+        {
+            return new MemdbStream(this, file);
         }
 
         public void Dispose()
@@ -65,12 +101,7 @@ namespace System.Data.SQLite
 
         ~InMemoryDatabase()
         {
-            // When we're being reclaimed 'sync' is not guaranteed
-            // to exist any more, so we're "resurrecting" it
-            // for the duration of the finalizer. 
-            GC.ReRegisterForFinalize(sync);
             Dispose(false);
-            GC.KeepAlive(sync);
         }
 
         bool disposed = false;
@@ -79,7 +110,7 @@ namespace System.Data.SQLite
             if (!disposed)
             {
                 disposed = true;
-                lock (sync) memdb_destroy();
+                memdb_destroy();
             }
         }
     }

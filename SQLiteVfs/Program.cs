@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.SQLite;
+using System.IO;
 using System.Text;
 
 namespace SQLiteVfs
@@ -10,17 +11,17 @@ namespace SQLiteVfs
         {
             using (var db = new InMemoryDatabase())
             {
-                byte[] data;
-
                 CreateDatabase("X:\\db1");
 
+                byte[] data;
                 db.GetData("X:\\db1", out data);
                 db.SetData("X:\\db2", data);
 
                 InsertData("X:\\db2");
 
-                db.GetData("X:\\db2", out data);
-                db.SetData("X:\\db3", data);
+                using (var iStream = db.GetStream("X:\\db2"))
+                using (var oStream = db.GetStream("X:\\db3"))
+                    CopyStream(iStream, oStream);
 
                 ReadData("X:\\db3");
             }
@@ -86,6 +87,20 @@ namespace SQLiteVfs
                         }
                     }
                 }
+            }
+        }
+
+        private static void CopyStream(Stream iStream, Stream oStream)
+        {
+            var size = 0xffff;
+            var buffer = new byte[size];
+            var offset = 0;
+            while (true)
+            {
+                var count = iStream.Read(buffer, offset, size);
+                if (count == 0) break;
+                oStream.Write(buffer, offset, count);
+                offset += count;
             }
         }
     }

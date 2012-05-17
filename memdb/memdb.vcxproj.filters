@@ -59,5 +59,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="InMemoryDatabase.cs" />
+    <None Include="MemdbStream.cs" />
   </ItemGroup>
 </Project>
