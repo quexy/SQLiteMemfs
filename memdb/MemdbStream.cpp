@@ -4,6 +4,7 @@
 
 using namespace System;
 using namespace System::IO;
+using namespace System::Runtime::InteropServices;
 
 namespace System
 {
@@ -19,17 +20,35 @@ namespace System
             MemdbStream::MemdbStream(String^ filename)
             {
                 position = 0;
+                disposed = false;
                 this->filename = Marshal::StringToHGlobalAnsi(filename);
             }
 
             MemdbStream::~MemdbStream(void)
             {
-                Marshal::FreeHGlobal(filename);
+                Destroy(true);
+                GC::SuppressFinalize(this);
+            }
+
+            MemdbStream::!MemdbStream(void)
+            {
+                GC::ReRegisterForFinalize(filename);
+                Destroy(false);
+                GC::KeepAlive(filename);
+            }
+
+            void MemdbStream::Destroy(bool disposing)
+            {
+                if(!disposed)
+                {
+                    disposed = true;
+                    Marshal::FreeHGlobal(filename);
+                }
             }
 
             void MemdbStream::Flush() { /* NOP */ }
 
-                Int64 MemdbStream::Length::get() { return memdb_getsize(ptr2str(filename)); }
+            Int64 MemdbStream::Length::get() { return memdb_getsize(ptr2str(filename)); }
 
             Int32 MemdbStream::Read(array<Byte>^ buffer, Int32 offset, Int32 count)
             {

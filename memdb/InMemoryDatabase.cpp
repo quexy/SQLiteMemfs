@@ -19,6 +19,17 @@ namespace System
 
             InMemoryDatabase::~InMemoryDatabase(void)
             {
+                Destroy(true);
+                GC::SuppressFinalize(this);
+            }
+
+            InMemoryDatabase::!InMemoryDatabase(void)
+            {
+                Destroy(false);
+            }
+
+            void InMemoryDatabase::Destroy(Boolean disposing)
+            {
                 if (!disposed)
                 {
                     disposed = true;

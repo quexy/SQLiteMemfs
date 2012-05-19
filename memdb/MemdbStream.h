@@ -6,7 +6,6 @@
 
 using namespace System;
 using namespace System::IO;
-using namespace System::Runtime::InteropServices;
 
 namespace System
 {
@@ -14,16 +13,19 @@ namespace System
     {
         namespace SQLite
         {
-            ref class MemdbStream : public Stream
+            ref class MemdbStream sealed : public Stream
             {
             private:
                 Int64 position;
                 IntPtr filename;
+                Boolean disposed;
+                void Destroy(Boolean disposing);
 
             public:
                 MemdbStream(System::String^ filename);
 
                 ~MemdbStream(void);
+                !MemdbStream(void);
 
                 property Boolean CanRead
                 {
