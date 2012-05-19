@@ -21,7 +21,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <CLRSupport>false</CLRSupport>
+    <CLRSupport>true</CLRSupport>
     <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -81,6 +81,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="InMemoryDatabase.h" />
+    <ClInclude Include="MemdbStream.h" />
     <ClInclude Include="memdb_file_data.h" />
     <ClInclude Include="memdb_file_io.h" />
     <ClInclude Include="memdb.h" />
@@ -90,16 +92,18 @@
     <ClInclude Include="vfs_object.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="file_object.c" />
-    <ClCompile Include="memdb_file_data.c" />
-    <ClCompile Include="memdb_file_io.c" />
-    <ClCompile Include="memdb.c" />
-    <ClCompile Include="memdb_vfs.c" />
-    <ClCompile Include="vfs_object.c" />
+    <ClCompile Include="AssemblyInfo.cpp" />
+    <ClCompile Include="file_object.cpp" />
+    <ClCompile Include="InMemoryDatabase.cpp" />
+    <ClCompile Include="MemdbStream.cpp" />
+    <ClCompile Include="memdb_file_data.cpp" />
+    <ClCompile Include="memdb_file_io.cpp" />
+    <ClCompile Include="memdb.cpp" />
+    <ClCompile Include="memdb_vfs.cpp" />
+    <ClCompile Include="vfs_object.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="InMemoryDatabase.cs" />
-    <None Include="MemdbStream.cs" />
+    <Reference Include="mscorlib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -58,7 +58,7 @@ MEMDB_EXTERN __int64 memdb_getsize(const char* zName)
 MEMDB_EXTERN void memdb_setsize(const char* zName, __int64 nSize)
 {
     memdb_file_data* pData = find_file_data(get_vfs_object(), zName);
-    if (pData != NULL || pData->iDeleted == 0)
+    if (pData != NULL && pData->iDeleted == 0)
         pData->nSize = nSize;
 }
 

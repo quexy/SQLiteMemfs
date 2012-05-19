@@ -13,12 +13,21 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\managed">
+      <UniqueIdentifier>{0ed4030f-96a6-4d16-a631-74bb913c2ab7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\managed">
+      <UniqueIdentifier>{ff7f6bca-c98e-44b8-8408-3bf5c40d5bf3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="file_object.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="memdb.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="sqlite3.h">
+    <ClInclude Include="memdb_file_data.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="memdb_file_io.h">
@@ -27,38 +36,46 @@
     <ClInclude Include="memdb_vfs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="file_object.h">
+    <ClInclude Include="sqlite3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="vfs_object.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="memdb_file_data.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="MemdbStream.h">
+      <Filter>Header Files\managed</Filter>
+    </ClInclude>
+    <ClInclude Include="InMemoryDatabase.h">
+      <Filter>Header Files\managed</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="memdb.c">
+    <ClCompile Include="file_object.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="memdb_file_io.c">
+    <ClCompile Include="memdb.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="memdb_vfs.c">
+    <ClCompile Include="memdb_file_data.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="file_object.c">
+    <ClCompile Include="memdb_file_io.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="vfs_object.c">
+    <ClCompile Include="memdb_vfs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="memdb_file_data.c">
+    <ClCompile Include="vfs_object.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="InMemoryDatabase.cs" />
-    <None Include="MemdbStream.cs" />
+    <ClCompile Include="InMemoryDatabase.cpp">
+      <Filter>Source Files\managed</Filter>
+    </ClCompile>
+    <ClCompile Include="MemdbStream.cpp">
+      <Filter>Source Files\managed</Filter>
+    </ClCompile>
+    <ClCompile Include="AssemblyInfo.cpp">
+      <Filter>Source Files\managed</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -3,6 +3,6 @@
 #define SQLITE_ENABLE_COLUMN_METADATA 1
 #define SQLITE_ENABLE_RTREE 1
 #define SQLITE_EXTERN
-#define SQLITE_API extern __declspec(dllexport)
+#define SQLITE_API extern __declspec(dllimport)
 
 #include "..\sqlite3\sqlite3.h"

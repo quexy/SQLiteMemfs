@@ -1,6 +1,6 @@
 #pragma once
 
-#define MEMDB_EXTERN extern __declspec(dllexport)
+#define MEMDB_EXTERN extern "C" __declspec(dllexport)
 
 
 MEMDB_EXTERN int memdb_init();
