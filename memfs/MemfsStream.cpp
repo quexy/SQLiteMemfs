@@ -1,6 +1,6 @@
-#include "MemdbStream.h"
+#include "MemfsStream.h"
 
-#include "memdb.h"
+#include "memfs.h"
 
 using namespace System;
 using namespace System::IO;
@@ -17,27 +17,27 @@ namespace System
                 return static_cast<const char*>(ptr.ToPointer());
             }
 
-            MemdbStream::MemdbStream(String^ filename)
+            MemfsStream::MemfsStream(String^ filename)
             {
                 position = 0;
                 disposed = false;
                 this->filename = Marshal::StringToHGlobalAnsi(filename);
             }
 
-            MemdbStream::~MemdbStream(void)
+            MemfsStream::~MemfsStream(void)
             {
                 Destroy(true);
                 GC::SuppressFinalize(this);
             }
 
-            MemdbStream::!MemdbStream(void)
+            MemfsStream::!MemfsStream(void)
             {
                 GC::ReRegisterForFinalize(filename);
                 Destroy(false);
                 GC::KeepAlive(filename);
             }
 
-            void MemdbStream::Destroy(bool disposing)
+            void MemfsStream::Destroy(bool disposing)
             {
                 if(!disposed)
                 {
@@ -46,19 +46,19 @@ namespace System
                 }
             }
 
-            void MemdbStream::Flush() { /* NOP */ }
+            void MemfsStream::Flush() { /* NOP */ }
 
-            Int64 MemdbStream::Length::get() { return memdb_getsize(ptr2str(filename)); }
+            Int64 MemfsStream::Length::get() { return memfs_getsize(ptr2str(filename)); }
 
-            Int32 MemdbStream::Read(array<Byte>^ buffer, Int32 offset, Int32 count)
+            Int32 MemfsStream::Read(array<Byte>^ buffer, Int32 offset, Int32 count)
             {
                 pin_ptr<unsigned char> ptr = &buffer[offset];
-                Int32 size = memdb_readdata(ptr2str(filename), ptr, count, position);
+                Int32 size = memfs_readdata(ptr2str(filename), ptr, count, position);
                 position += size;
                 return size;
             }
 
-            Int64 MemdbStream::Seek(Int64 offset, SeekOrigin origin)
+            Int64 MemfsStream::Seek(Int64 offset, SeekOrigin origin)
             {
                 switch (origin)
                 {
@@ -77,15 +77,15 @@ namespace System
                 return Position;
             }
 
-            void MemdbStream::SetLength(Int64 value)
+            void MemfsStream::SetLength(Int64 value)
             {
-                memdb_setsize(ptr2str(filename), value);
+                memfs_setsize(ptr2str(filename), value);
             }
 
-            void MemdbStream::Write(array<Byte>^ buffer, Int32 offset, Int32 count)
+            void MemfsStream::Write(array<Byte>^ buffer, Int32 offset, Int32 count)
             {
                 pin_ptr<unsigned char> ptr = &buffer[offset];
-                Int32 size = memdb_writedata(ptr2str(filename), ptr, count, position);
+                Int32 size = memfs_writedata(ptr2str(filename), ptr, count, position);
                 position += size;
             }
         }

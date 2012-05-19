@@ -49,7 +49,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\memdb\memdb.vcxproj">
+    <ProjectReference Include="..\memfs\memfs.vcxproj">
       <Project>{338BB547-7E89-432F-804D-7D5C5F98C9E5}</Project>
       <Name>memdb</Name>
     </ProjectReference>

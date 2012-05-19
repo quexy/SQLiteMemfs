@@ -1,8 +1,8 @@
 #pragma once
 
-#include "InMemoryDatabase.h"
+#include "InMemoryFileSystem.h"
 
-#include "memdb.h"
+#include "memfs.h"
 
 using namespace System;
 using namespace System::IO;
@@ -13,7 +13,7 @@ namespace System
     {
         namespace SQLite
         {
-            ref class MemdbStream sealed : public Stream
+            ref class MemfsStream sealed : public Stream
             {
             private:
                 Int64 position;
@@ -22,10 +22,10 @@ namespace System
                 void Destroy(Boolean disposing);
 
             public:
-                MemdbStream(System::String^ filename);
+                MemfsStream(System::String^ filename);
 
-                ~MemdbStream(void);
-                !MemdbStream(void);
+                ~MemfsStream(void);
+                !MemfsStream(void);
 
                 property Boolean CanRead
                 {

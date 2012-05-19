@@ -8,7 +8,7 @@ namespace SQLiteVfs
     {
         static void Main(string[] args)
         {
-            using (var db = new InMemoryDatabase())
+            using (var db = new InMemoryFileSystem())
             {
                 CreateDatabase("X:\\db1");
 

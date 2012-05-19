@@ -4,7 +4,7 @@
 #include "sqlite3.h"
 
 #include "file_object.h"
-#include "memdb.h"
+#include "memfs.h"
 #include "vfs_object.h"
 
 
@@ -12,7 +12,7 @@
 static int refCount = 0;
 
 
-MEMDB_EXTERN int memdb_init()
+MEMFS_EXTERN int memfs_init()
 {
     ++refCount;
     if (refCount == 1)
@@ -21,9 +21,9 @@ MEMDB_EXTERN int memdb_init()
 }
 
 
-MEMDB_EXTERN int memdb_destroy()
+MEMFS_EXTERN int memfs_destroy()
 {
-    memdb_file_data* pData;
+    memfs_file_data* pData;
 
     --refCount;
     if (refCount == 0)
@@ -33,7 +33,7 @@ MEMDB_EXTERN int memdb_destroy()
 
         while(pVfs->pAppData != NULL)
         {
-            pData = (memdb_file_data*)(pVfs->pAppData);
+            pData = (memfs_file_data*)(pVfs->pAppData);
             pVfs->pAppData = pData->pNext;
 
             pData->pNext = NULL;
@@ -45,9 +45,9 @@ MEMDB_EXTERN int memdb_destroy()
 }
 
 
-MEMDB_EXTERN __int64 memdb_getsize(const char* zName)
+MEMFS_EXTERN __int64 memfs_getsize(const char* zName)
 {
-    memdb_file_data* pData = find_file_data(get_vfs_object(), zName);
+    memfs_file_data* pData = find_file_data(get_vfs_object(), zName);
     if (pData == NULL || pData->iDeleted == 1)
         return 0;
     else // found and not deleted
@@ -55,15 +55,15 @@ MEMDB_EXTERN __int64 memdb_getsize(const char* zName)
 }
 
 
-MEMDB_EXTERN void memdb_setsize(const char* zName, __int64 nSize)
+MEMFS_EXTERN void memfs_setsize(const char* zName, __int64 nSize)
 {
-    memdb_file_data* pData = find_file_data(get_vfs_object(), zName);
+    memfs_file_data* pData = find_file_data(get_vfs_object(), zName);
     if (pData != NULL && pData->iDeleted == 0)
         pData->nSize = nSize;
 }
 
 
-MEMDB_EXTERN int memdb_readdata(const char* zName, void* data, int nSize, __int64 iOfst)
+MEMFS_EXTERN int memfs_readdata(const char* zName, void* data, int nSize, __int64 iOfst)
 {
     int result, flags;
     file_object* pFile = NULL;
@@ -88,7 +88,7 @@ MEMDB_EXTERN int memdb_readdata(const char* zName, void* data, int nSize, __int6
 }
 
 
-MEMDB_EXTERN int memdb_writedata(const char* zName, void* data, int nSize, __int64 iOfst)
+MEMFS_EXTERN int memfs_writedata(const char* zName, void* data, int nSize, __int64 iOfst)
 {
     int result, flags;
     file_object* pFile = NULL;

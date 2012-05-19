@@ -24,45 +24,33 @@
     <ClInclude Include="file_object.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="memdb.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="memdb_file_data.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="memdb_file_io.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="memdb_vfs.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="sqlite3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="vfs_object.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MemdbStream.h">
+    <ClInclude Include="memfs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="memfs_file_data.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="memfs_file_io.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="memfs_vfs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MemfsStream.h">
       <Filter>Header Files\managed</Filter>
     </ClInclude>
-    <ClInclude Include="InMemoryDatabase.h">
+    <ClInclude Include="InMemoryFileSystem.h">
       <Filter>Header Files\managed</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="file_object.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="memdb.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="memdb_file_data.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="memdb_file_io.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="memdb_vfs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="vfs_object.cpp">
@@ -71,10 +59,22 @@
     <ClCompile Include="InMemoryDatabase.cpp">
       <Filter>Source Files\managed</Filter>
     </ClCompile>
-    <ClCompile Include="MemdbStream.cpp">
+    <ClCompile Include="AssemblyInfo.cpp">
       <Filter>Source Files\managed</Filter>
     </ClCompile>
-    <ClCompile Include="AssemblyInfo.cpp">
+    <ClCompile Include="memfs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="memfs_file_data.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="memfs_file_io.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="memfs_vfs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MemfsStream.cpp">
       <Filter>Source Files\managed</Filter>
     </ClCompile>
   </ItemGroup>

@@ -3,17 +3,17 @@
 
 #include "sqlite3.h"
 
-#include "memdb_file_data.h"
+#include "memfs_file_data.h"
 
 
 
-void clear_file(memdb_file_data* pData);
+void clear_file(memfs_file_data* pData);
 
 
-int create_file_data(memdb_file_data* pData, const char* zName)
+int create_file_data(memfs_file_data* pData, const char* zName)
 {
     int nName;
-    memset(pData, 0, sizeof(memdb_file_data));
+    memset(pData, 0, sizeof(memfs_file_data));
 
     nName = strlen(zName) + 1;
     pData->zName = (char*)malloc(nName);
@@ -28,9 +28,9 @@ int create_file_data(memdb_file_data* pData, const char* zName)
 }
 
 
-memdb_file_data* find_file_data(sqlite3_vfs* pVfs, const char* zName)
+memfs_file_data* find_file_data(sqlite3_vfs* pVfs, const char* zName)
 {
-    memdb_file_data* pData = (memdb_file_data*)(pVfs->pAppData);
+    memfs_file_data* pData = (memfs_file_data*)(pVfs->pAppData);
     while (pData != NULL)
     {
         if (strcmp(pData->zName, zName) == 0)
@@ -41,7 +41,7 @@ memdb_file_data* find_file_data(sqlite3_vfs* pVfs, const char* zName)
 }
 
 
-int delete_file_data(memdb_file_data* pData)
+int delete_file_data(memfs_file_data* pData)
 {
     pData->iDeleted = 1;
 
@@ -55,7 +55,7 @@ int delete_file_data(memdb_file_data* pData)
 }
 
 
-int destroy_file(memdb_file_data* pData)
+int destroy_file(memfs_file_data* pData)
 {
     clear_file(pData);
     free(pData);
@@ -63,7 +63,7 @@ int destroy_file(memdb_file_data* pData)
 }
 
 
-void clear_file(memdb_file_data* pData)
+void clear_file(memfs_file_data* pData)
 {
     if (pData->pBuffer != NULL)
         free(pData->pBuffer);

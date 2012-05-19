@@ -14,8 +14,8 @@
     <ProjectGuid>{338BB547-7E89-432F-804D-7D5C5F98C9E5}</ProjectGuid>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <Keyword>ManagedCProj</Keyword>
-    <RootNamespace>memdb</RootNamespace>
-    <ProjectName>memdb</ProjectName>
+    <RootNamespace>memfs</RootNamespace>
+    <ProjectName>memfs</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -81,25 +81,25 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="InMemoryDatabase.h" />
-    <ClInclude Include="MemdbStream.h" />
-    <ClInclude Include="memdb_file_data.h" />
-    <ClInclude Include="memdb_file_io.h" />
-    <ClInclude Include="memdb.h" />
+    <ClInclude Include="InMemoryFileSystem.h" />
+    <ClInclude Include="MemfsStream.h" />
+    <ClInclude Include="memfs_file_data.h" />
+    <ClInclude Include="memfs_file_io.h" />
+    <ClInclude Include="memfs.h" />
     <ClInclude Include="sqlite3.h" />
     <ClInclude Include="file_object.h" />
-    <ClInclude Include="memdb_vfs.h" />
+    <ClInclude Include="memfs_vfs.h" />
     <ClInclude Include="vfs_object.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
     <ClCompile Include="file_object.cpp" />
     <ClCompile Include="InMemoryDatabase.cpp" />
-    <ClCompile Include="MemdbStream.cpp" />
-    <ClCompile Include="memdb_file_data.cpp" />
-    <ClCompile Include="memdb_file_io.cpp" />
-    <ClCompile Include="memdb.cpp" />
-    <ClCompile Include="memdb_vfs.cpp" />
+    <ClCompile Include="MemfsStream.cpp" />
+    <ClCompile Include="memfs_file_data.cpp" />
+    <ClCompile Include="memfs_file_io.cpp" />
+    <ClCompile Include="memfs.cpp" />
+    <ClCompile Include="memfs_vfs.cpp" />
     <ClCompile Include="vfs_object.cpp" />
   </ItemGroup>
   <ItemGroup>
