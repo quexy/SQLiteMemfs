@@ -9,19 +9,19 @@ namespace System
     {
         namespace SQLite
         {
-            public ref class InMemoryFileSystem sealed : public System::IDisposable
+            public ref class SQLiteMemfs sealed : public System::IDisposable
             {
             private:
                 Boolean disposed;
                 void Destroy(Boolean disposing);
 
             public:
-                InMemoryFileSystem(void);
+                SQLiteMemfs(void);
 
-                ~InMemoryFileSystem(void);
-                !InMemoryFileSystem(void);
+                ~SQLiteMemfs(void);
+                !SQLiteMemfs(void);
 
-                Stream^ GetStream(String^ file);
+                static Stream^ GetStream(String^ file);
             };
         }
     }

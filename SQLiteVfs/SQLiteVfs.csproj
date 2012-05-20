@@ -49,9 +49,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\memfs\memfs.vcxproj">
+    <ProjectReference Include="..\SQLiteMemfs\SQLiteMemfs.vcxproj">
       <Project>{338BB547-7E89-432F-804D-7D5C5F98C9E5}</Project>
-      <Name>memdb</Name>
+      <Name>SQLiteMemfs</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Data.SQLite\System.Data.SQLite.csproj">
       <Project>{6058977F-C2E1-4651-BCC0-66CFF2E709ED}</Project>

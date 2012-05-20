@@ -1,4 +1,4 @@
-#include "InMemoryFileSystem.h"
+#include "SQLiteMemfs.h"
 #include "MemfsStream.h"
 
 #include "memfs.h"
@@ -11,24 +11,24 @@ namespace System
     {
         namespace SQLite
         {
-            InMemoryFileSystem::InMemoryFileSystem(void)
+            SQLiteMemfs::SQLiteMemfs(void)
             {
                 disposed = false;
                 memfs_init();
             }
 
-            InMemoryFileSystem::~InMemoryFileSystem(void)
+            SQLiteMemfs::~SQLiteMemfs(void)
             {
                 Destroy(true);
                 GC::SuppressFinalize(this);
             }
 
-            InMemoryFileSystem::!InMemoryFileSystem(void)
+            SQLiteMemfs::!SQLiteMemfs(void)
             {
                 Destroy(false);
             }
 
-            void InMemoryFileSystem::Destroy(Boolean disposing)
+            void SQLiteMemfs::Destroy(Boolean disposing)
             {
                 if (!disposed)
                 {
@@ -37,7 +37,7 @@ namespace System
                 }
             }
 
-            System::IO::Stream^ InMemoryFileSystem::GetStream(System::String^ file)
+            System::IO::Stream^ SQLiteMemfs::GetStream(System::String^ file)
             {
                 return gcnew System::Data::SQLite::MemfsStream(file);
             }

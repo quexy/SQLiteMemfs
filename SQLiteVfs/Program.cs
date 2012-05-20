@@ -8,18 +8,18 @@ namespace SQLiteVfs
     {
         static void Main(string[] args)
         {
-            using (var db = new InMemoryFileSystem())
+            using (var db = new SQLiteMemfs())
             {
                 CreateDatabase("X:\\db1");
 
-                using (var iStream = db.GetStream("X:\\db1"))
-                using (var oStream = db.GetStream("X:\\db2"))
+                using (var iStream = SQLiteMemfs.GetStream("X:\\db1"))
+                using (var oStream = SQLiteMemfs.GetStream("X:\\db2"))
                     iStream.CopyTo(oStream);
 
                 InsertData("X:\\db2");
 
-                using (var iStream = db.GetStream("X:\\db2"))
-                using (var oStream = db.GetStream("X:\\db3"))
+                using (var iStream = SQLiteMemfs.GetStream("X:\\db2"))
+                using (var oStream = SQLiteMemfs.GetStream("X:\\db3"))
                     iStream.CopyTo(oStream);
 
                 ReadData("X:\\db3");

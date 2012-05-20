@@ -45,7 +45,7 @@
     <ClInclude Include="MemfsStream.h">
       <Filter>Header Files\managed</Filter>
     </ClInclude>
-    <ClInclude Include="InMemoryFileSystem.h">
+    <ClInclude Include="SQLiteMemfs.h">
       <Filter>Header Files\managed</Filter>
     </ClInclude>
   </ItemGroup>
@@ -55,9 +55,6 @@
     </ClCompile>
     <ClCompile Include="vfs_object.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="InMemoryDatabase.cpp">
-      <Filter>Source Files\managed</Filter>
     </ClCompile>
     <ClCompile Include="AssemblyInfo.cpp">
       <Filter>Source Files\managed</Filter>
@@ -75,6 +72,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MemfsStream.cpp">
+      <Filter>Source Files\managed</Filter>
+    </ClCompile>
+    <ClCompile Include="SQLiteMemfs.cpp">
       <Filter>Source Files\managed</Filter>
     </ClCompile>
   </ItemGroup>

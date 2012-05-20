@@ -9,11 +9,11 @@ using namespace System::Security::Permissions;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 //
-[assembly:AssemblyTitleAttribute("memfs")];
-[assembly:AssemblyDescriptionAttribute("System.Data.SQLite.InMemoryFileSystem")];
+[assembly:AssemblyTitleAttribute("SQLiteMemfs")];
+[assembly:AssemblyDescriptionAttribute("System.Data.SQLite.SQLiteMemfs")];
 [assembly:AssemblyConfigurationAttribute("")];
 [assembly:AssemblyCompanyAttribute("")];
-[assembly:AssemblyProductAttribute("memfs")];
+[assembly:AssemblyProductAttribute("SQLiteMemfs")];
 [assembly:AssemblyCopyrightAttribute("Copyright (c)  2012")];
 [assembly:AssemblyTrademarkAttribute("")];
 [assembly:AssemblyCultureAttribute("")];
