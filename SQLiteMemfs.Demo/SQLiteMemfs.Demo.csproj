@@ -8,8 +8,8 @@
     <ProjectGuid>{B7AA58D5-D3AA-4A05-BC98-A0A14C21649C}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SQLiteVfs</RootNamespace>
-    <AssemblyName>SQLiteVfs</AssemblyName>
+    <RootNamespace>SQLiteMemfs.Demo</RootNamespace>
+    <AssemblyName>SQLiteMemfs.Demo</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>

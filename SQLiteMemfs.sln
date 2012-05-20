@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sqlite3.dll", "sqlite3.dll", "{4F5CB7C2-D5CA-4D06-BCCD-40E7E5B9A482}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "System.Data.SQLite.dll", "System.Data.SQLite.dll", "{93BB1AC4-0F17-4EE4-8F24-F918A3FCA1BF}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sqlite3", "sqlite3\sqlite3.vcxproj", "{B9629A70-1A0F-4E53-B492-D4E03C0561CB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "System.Data.SQLite.dll", "System.Data.SQLite.dll", "{93BB1AC4-0F17-4EE4-8F24-F918A3FCA1BF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Data.SQLite", "System.Data.SQLite\System.Data.SQLite.csproj", "{6058977F-C2E1-4651-BCC0-66CFF2E709ED}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -17,10 +17,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SQLiteMemfs", "SQLiteMemfs\
 		{B9629A70-1A0F-4E53-B492-D4E03C0561CB} = {B9629A70-1A0F-4E53-B492-D4E03C0561CB}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SQLiteVfs", "SQLiteVfs\SQLiteVfs.csproj", "{B7AA58D5-D3AA-4A05-BC98-A0A14C21649C}"
-	ProjectSection(ProjectDependencies) = postProject
-		{338BB547-7E89-432F-804D-7D5C5F98C9E5} = {338BB547-7E89-432F-804D-7D5C5F98C9E5}
-	EndProjectSection
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SQLiteMemfs.Demo", "SQLiteMemfs.Demo\SQLiteMemfs.Demo.csproj", "{B7AA58D5-D3AA-4A05-BC98-A0A14C21649C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
