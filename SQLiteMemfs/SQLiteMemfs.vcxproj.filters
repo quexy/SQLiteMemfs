@@ -78,4 +78,9 @@
       <Filter>Source Files\managed</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="SQLiteMemfs.snk">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
 </Project>
