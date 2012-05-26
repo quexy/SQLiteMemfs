@@ -9,18 +9,18 @@ namespace SQLiteMemfs.Demo
     {
         static void Main(string[] args)
         {
-            using (new Memfs())
+            using (var memfs = new Memfs())
             {
                 CreateDatabase("X:\\db1");
 
-                using (var iStream = Memfs.GetStream("X:\\db1"))
-                using (var oStream = Memfs.GetStream("X:\\db2"))
+                using (var iStream = memfs.GetStream("X:\\db1"))
+                using (var oStream = memfs.GetStream("X:\\db2"))
                     iStream.CopyTo(oStream);
 
                 InsertData("X:\\db2");
 
-                using (var iStream = Memfs.GetStream("X:\\db2"))
-                using (var oStream = Memfs.GetStream("X:\\db3"))
+                using (var iStream = memfs.GetStream("X:\\db2"))
+                using (var oStream = memfs.GetStream("X:\\db3"))
                     iStream.CopyTo(oStream);
 
                 ReadData("X:\\db3");

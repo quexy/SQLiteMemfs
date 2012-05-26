@@ -108,3 +108,10 @@ MEMFS_EXTERN int memfs_writedata(const char* zName, void* data, int nSize, __int
     
     return result;
 }
+
+
+MEMFS_EXTERN int memfs_delfile(const char* zName)
+{
+    sqlite3_vfs* pVfs = get_vfs_object();
+    return pVfs->xDelete(pVfs, zName, 0);
+}

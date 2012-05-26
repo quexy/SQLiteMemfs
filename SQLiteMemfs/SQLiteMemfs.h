@@ -12,6 +12,7 @@ namespace System
             public ref class SQLiteMemfs sealed : public System::IDisposable
             {
             private:
+                static Object^ memfs_sync = gcnew Object();
                 Boolean disposed;
                 void Destroy(Boolean disposing);
 
@@ -21,7 +22,8 @@ namespace System
                 ~SQLiteMemfs(void);
                 !SQLiteMemfs(void);
 
-                static Stream^ GetStream(String^ file);
+                Stream^ GetStream(String^ file);
+                void Delete(String^ file);
             };
         }
     }
