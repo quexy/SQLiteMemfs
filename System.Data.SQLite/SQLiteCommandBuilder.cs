@@ -49,7 +49,10 @@ namespace System.Data.SQLite
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-
+    /// <summary>
+    /// Disposes the resources held by the current SQLiteCommandBuilder instance
+    /// </summary>
+    /// <param name="disposing">true if managed resources should also be disposed</param>
     protected override void Dispose(bool disposing)
     {
         try

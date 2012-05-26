@@ -33,6 +33,9 @@ namespace System.Data.SQLite
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     #region IDisposable Members
+    /// <summary>
+    /// Disposes the current SQLiteFactory instance
+    /// </summary>
     public void Dispose()
     {
         Dispose(true);
@@ -77,6 +80,9 @@ namespace System.Data.SQLite
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     #region Destructor
+    /// <summary>
+    /// Destroys the current SQLiteFactory instance
+    /// </summary>
     ~SQLiteFactory()
     {
         Dispose(false);
