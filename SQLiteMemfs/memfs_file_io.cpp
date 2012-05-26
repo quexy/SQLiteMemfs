@@ -35,7 +35,7 @@ int memfs_io_Write(sqlite3_file* pFile, const void* pBuf, int iAmt, sqlite3_int6
     if (pData->iDeleted == 1) return SQLITE_IOERR;
 
     newSize = iOfst + iAmt;
-    newLength = (sqlite3_int64)(newSize * 1.1);
+    newLength = (sqlite3_int64)(newSize * 1.7);
     if (pData->nLenght < newSize)
     {
         void* newBuffer = (void*)malloc((size_t)newLength);
