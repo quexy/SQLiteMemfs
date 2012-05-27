@@ -1,3 +1,5 @@
+#pragma unmanaged
+
 #include "sqlite3.h"
 
 #include "file_object.h"

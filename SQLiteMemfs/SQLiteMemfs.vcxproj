@@ -84,6 +84,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="memfs_sync.h" />
     <ClInclude Include="SQLiteMemfs.h" />
     <ClInclude Include="MemfsStream.h" />
     <ClInclude Include="memfs_file_data.h" />
@@ -97,6 +98,7 @@
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
     <ClCompile Include="file_object.cpp" />
+    <ClCompile Include="memfs_sync.cpp" />
     <ClCompile Include="SQLiteMemfs.cpp" />
     <ClCompile Include="MemfsStream.cpp" />
     <ClCompile Include="memfs_file_data.cpp" />

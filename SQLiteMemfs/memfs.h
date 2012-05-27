@@ -1,7 +1,6 @@
 #pragma once
 
-#define MEMFS_EXTERN
-// #define MEMFS_EXTERN extern "C" __declspec(dllexport)
+#define MEMFS_EXTERN extern "C" __declspec(dllexport)
 
 
 MEMFS_EXTERN int memfs_init();

@@ -1,3 +1,5 @@
+#pragma unmanaged
+
 #include <stdlib.h>
 #include <string.h>
 
@@ -5,6 +7,7 @@
 
 #include "file_object.h"
 #include "memfs.h"
+#include "memfs_sync.h"
 #include "vfs_object.h"
 
 
@@ -14,16 +17,24 @@ static int refCount = 0;
 
 MEMFS_EXTERN int memfs_init()
 {
+    int result;
+    memfs_sync_enter();
+    
     ++refCount;
     if (refCount == 1)
         sqlite3_vfs_register(get_vfs_object(), 1);
-    return refCount - 1;
+    result = refCount - 1;
+    
+    memfs_sync_exit();
+    return result;
 }
 
 
 MEMFS_EXTERN int memfs_destroy()
 {
+    int result;
     memfs_file_data* pData;
+    memfs_sync_enter();
 
     --refCount;
     if (refCount == 0)
@@ -41,7 +52,10 @@ MEMFS_EXTERN int memfs_destroy()
             else delete_file_data(pData);
         }
     }
-    return refCount;
+    result = refCount;
+
+    memfs_sync_exit();
+    return result;
 }
 
 

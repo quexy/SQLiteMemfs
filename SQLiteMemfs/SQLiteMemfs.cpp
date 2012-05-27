@@ -1,7 +1,9 @@
 #include "SQLiteMemfs.h"
 #include "MemfsStream.h"
 
+#pragma unmanaged
 #include "memfs.h"
+#pragma managed
 
 using namespace System;
 using namespace System::Runtime::InteropServices;
@@ -15,10 +17,8 @@ namespace System
         {
             SQLiteMemfs::SQLiteMemfs(void)
             {
-                Monitor::Enter(memfs_sync);
                 disposed = false;
                 memfs_init();
-                Monitor::Exit(memfs_sync);
             }
 
             SQLiteMemfs::~SQLiteMemfs(void)
@@ -29,19 +29,15 @@ namespace System
 
             SQLiteMemfs::!SQLiteMemfs(void)
             {
-                GC::ReRegisterForFinalize(memfs_sync);
                 Destroy(false);
-                GC::KeepAlive(memfs_sync);
             }
 
             void SQLiteMemfs::Destroy(Boolean disposing)
             {
                 if (!disposed)
                 {
-                    Monitor::Enter(memfs_sync);
                     disposed = true;
                     memfs_destroy();
-                    Monitor::Exit(memfs_sync);
                 }
             }
 

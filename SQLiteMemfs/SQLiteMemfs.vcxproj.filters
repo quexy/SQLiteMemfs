@@ -48,6 +48,9 @@
     <ClInclude Include="SQLiteMemfs.h">
       <Filter>Header Files\managed</Filter>
     </ClInclude>
+    <ClInclude Include="memfs_sync.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="file_object.cpp">
@@ -76,6 +79,9 @@
     </ClCompile>
     <ClCompile Include="SQLiteMemfs.cpp">
       <Filter>Source Files\managed</Filter>
+    </ClCompile>
+    <ClCompile Include="memfs_sync.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

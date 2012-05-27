@@ -1,3 +1,5 @@
+#pragma unmanaged
+
 #include <stdlib.h>
 #include <string.h>
 

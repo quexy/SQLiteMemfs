@@ -1,6 +1,8 @@
 #pragma once
 
+#pragma unmanaged
 #include "memfs.h"
+#pragma managed
 
 using namespace System;
 using namespace System::IO;

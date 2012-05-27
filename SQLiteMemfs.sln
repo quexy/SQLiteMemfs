@@ -8,9 +8,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "System.Data.SQLite.dll", "System.Data.SQLite.dll", "{93BB1AC4-0F17-4EE4-8F24-F918A3FCA1BF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Data.SQLite", "System.Data.SQLite\System.Data.SQLite.csproj", "{6058977F-C2E1-4651-BCC0-66CFF2E709ED}"
-	ProjectSection(ProjectDependencies) = postProject
-		{B9629A70-1A0F-4E53-B492-D4E03C0561CB} = {B9629A70-1A0F-4E53-B492-D4E03C0561CB}
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SQLiteMemfs", "SQLiteMemfs\SQLiteMemfs.vcxproj", "{338BB547-7E89-432F-804D-7D5C5F98C9E5}"
 	ProjectSection(ProjectDependencies) = postProject
