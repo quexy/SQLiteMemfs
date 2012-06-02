@@ -400,7 +400,7 @@
             </summary>
             <param name="nTimeoutMS">The number of milliseconds to wait before returning SQLITE_BUSY</param>
         </member>
-        <member name="M:System.Data.SQLite.SQLiteBase.GetLastError">
+        <member name="M:System.Data.SQLite.SQLiteBase.SQLiteLastError">
             <summary>
             Returns the text of the last error issued by SQLite
             </summary>
@@ -410,12 +410,6 @@
             <summary>
             When pooling is enabled, force this connection to be disposed rather than returned to the pool
             </summary>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteBase.CountPool">
-            <summary>
-            When pooling is enabled, returns the number of pool entries matching the current file name.
-            </summary>
-            <returns>The number of pool entries matching the current file name.</returns>
         </member>
         <member name="M:System.Data.SQLite.SQLiteBase.Prepare(System.Data.SQLite.SQLiteConnection,System.String,System.Data.SQLite.SQLiteStatement,System.UInt32,System.String@)">
             <summary>
@@ -1254,7 +1248,7 @@
             </item>
             <item>
             <description>Password</description>
-            <description>{password} - Using this parameter requires that the CryptoAPI based codec be enabled at compile-time for both the native interop assembly and the core managed assemblies; otherwise, using this parameter may result in an exception being thrown when attempting to open the connection.</description>
+            <description>{password}</description>
             <description>N</description>
             <description></description>
             </item>
@@ -1444,7 +1438,7 @@
         </member>
         <member name="M:System.Data.SQLite.SQLiteConnection.Clone">
             <summary>
-            Creates a clone of the connection.  All attached databases and user-defined functions are cloned.  If the existing connection is open, the cloned connection
+            Creates a clone of the connection.  All attached databases and user-defined functions are cloned.  If the existing connection is open, the cloned connection 
             will also be opened.
             </summary>
             <returns></returns>
@@ -1468,7 +1462,7 @@
             </summary>
             <param name="isolationLevel">This parameter is ignored.</param>
             <param name="deferredLock">When TRUE, SQLite defers obtaining a write lock until a write operation is requested.
-            When FALSE, a writelock is obtained immediately.  The default is TRUE, but in a multi-threaded multi-writer
+            When FALSE, a writelock is obtained immediately.  The default is TRUE, but in a multi-threaded multi-writer 
             environment, one may instead choose to lock the database immediately to avoid any possible writer deadlock.</param>
             <returns>Returns a SQLiteTransaction object.</returns>
         </member>
@@ -1477,7 +1471,7 @@
             OBSOLETE.  Creates a new SQLiteTransaction if one isn't already active on the connection.
             </summary>
             <param name="deferredLock">When TRUE, SQLite defers obtaining a write lock until a write operation is requested.
-            When FALSE, a writelock is obtained immediately.  The default is false, but in a multi-threaded multi-writer
+            When FALSE, a writelock is obtained immediately.  The default is false, but in a multi-threaded multi-writer 
             environment, one may instead choose to lock the database immediately to avoid any possible writer deadlock.</param>
             <returns>Returns a SQLiteTransaction object.</returns>
         </member>
@@ -1487,7 +1481,7 @@
             </summary>
             <param name="isolationLevel">Supported isolation levels are Serializable, ReadCommitted and Unspecified.</param>
             <remarks>
-            Unspecified will use the default isolation level specified in the connection string.  If no isolation level is specified in the
+            Unspecified will use the default isolation level specified in the connection string.  If no isolation level is specified in the 
             connection string, Serializable is used.
             Serializable transactions are the default.  In this mode, the engine gets an immediate lock on the database, and no other threads
             may begin a transaction.  Other threads may read from the database, but not write.
@@ -1790,11 +1784,6 @@
             This event is raised whenever the database is opened or closed.
             </summary>
         </member>
-        <member name="P:System.Data.SQLite.SQLiteConnection.PoolCount">
-            <summary>
-            Returns the number of pool entries for the file name associated with this connection.
-            </summary>
-        </member>
         <member name="P:System.Data.SQLite.SQLiteConnection.ConnectionString">
             <summary>
             The connection string containing the parameters for the connection
@@ -1936,7 +1925,7 @@
         </member>
         <member name="P:System.Data.SQLite.SQLiteConnection.DefaultTimeout">
             <summary>
-            Gets/sets the default command timeout for newly-created commands.  This is especially useful for
+            Gets/sets the default command timeout for newly-created commands.  This is especially useful for 
             commands used internally such as inside a SQLiteTransaction, where setting the timeout is not possible.
             This can also be set in the ConnectionString with "Default Timeout"
             </summary>
@@ -1971,13 +1960,6 @@
         <member name="P:System.Data.SQLite.SQLiteConnection.MemoryHighwater">
             <summary>
             Returns the maximum amount of memory (in bytes) used by the SQLite core library since the high-water mark was last reset.
-            </summary>
-        </member>
-        <member name="P:System.Data.SQLite.SQLiteConnection.DefineConstants">
-            <summary>
-            Returns a string containing the define constants (i.e. compile-time
-            options) used to compile the core managed assembly, delimited with
-            spaces.
             </summary>
         </member>
         <member name="P:System.Data.SQLite.SQLiteConnection.SQLiteVersion">
@@ -2048,7 +2030,7 @@
         </member>
         <member name="T:System.Data.SQLite.SQLiteCommitHandler">
             <summary>
-            Raised when a transaction is about to be committed.  To roll back a transaction, set the
+            Raised when a transaction is about to be committed.  To roll back a transaction, set the 
             rollbackTrans boolean value to true.
             </summary>
             <param name="sender">The connection committing the transaction</param>
@@ -2178,28 +2160,6 @@
             <summary>
             The default version number new pools will get
             </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteConnectionPool._poolOpened">
-            <summary>
-            The number of connections successfully opened from any pool.
-            This value is incremented by the Remove method.
-            </summary>
-        </member>
-        <member name="F:System.Data.SQLite.SQLiteConnectionPool._poolClosed">
-            <summary>
-            The number of connections successfully closed from any pool.
-            This value is incremented by the Add method.
-            </summary>
-        </member>
-        <member name="M:System.Data.SQLite.SQLiteConnectionPool.GetCounts(System.String,System.Collections.Generic.Dictionary{System.String,System.Int32}@,System.Int32@,System.Int32@,System.Int32@)">
-            <summary>
-            Counts the number of pool entries matching the specified file name.
-            </summary>
-            <param name="fileName">The file name to match or null to match all files.</param>
-            <param name="counts">The pool entry counts for each matching file.</param>
-            <param name="openCount">The total number of connections successfully opened from any pool.</param>
-            <param name="closeCount">The total number of connections successfully closed from any pool.</param>
-            <param name="totalCount">The total number of pool entries for all matching files.</param>
         </member>
         <member name="M:System.Data.SQLite.SQLiteConnectionPool.Remove(System.String,System.Int32,System.Int32@)">
             <summary>
