@@ -41,7 +41,7 @@ namespace System
 
             void MemfsStream::Destroy(bool disposing)
             {
-                if(!disposed)
+                if (!disposed)
                 {
                     disposed = true;
                     Marshal::FreeHGlobal(filename);
