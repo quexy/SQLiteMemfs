@@ -7,3 +7,4 @@ obj
 *.opensdf
 *.suo
 *proj*.user
+dependencies/System.Data.SQLite.*

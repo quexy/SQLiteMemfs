@@ -15,6 +15,7 @@ namespace System
     {
         namespace SQLite
         {
+            [System::Security::Permissions::SecurityPermission(System::Security::Permissions::SecurityAction::Assert, UnmanagedCode = true)]
             SQLiteMemfs::SQLiteMemfs(void)
             {
                 disposed = false;
@@ -32,6 +33,7 @@ namespace System
                 Destroy(false);
             }
 
+            [System::Security::Permissions::SecurityPermission(System::Security::Permissions::SecurityAction::Assert, UnmanagedCode = true)]
             void SQLiteMemfs::Destroy(Boolean disposing)
             {
                 if (!disposed)
@@ -46,6 +48,7 @@ namespace System
                 return gcnew System::Data::SQLite::MemfsStream(file);
             }
 
+            [System::Security::Permissions::SecurityPermission(System::Security::Permissions::SecurityAction::Assert, UnmanagedCode = true)]
             void SQLiteMemfs::Delete(String^ file)
             {
                 IntPtr ptr = Marshal::StringToHGlobalAnsi(file);

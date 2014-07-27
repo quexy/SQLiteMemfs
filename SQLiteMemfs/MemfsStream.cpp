@@ -50,8 +50,10 @@ namespace System
 
             void MemfsStream::Flush() { /* NOP */ }
 
+            [System::Security::Permissions::SecurityPermission(System::Security::Permissions::SecurityAction::Assert, UnmanagedCode = true)]
             Int64 MemfsStream::Length::get() { return memfs_getsize(ptr2str(filename)); }
 
+            [System::Security::Permissions::SecurityPermission(System::Security::Permissions::SecurityAction::Assert, UnmanagedCode = true)]
             Int32 MemfsStream::Read(array<Byte>^ buffer, Int32 offset, Int32 count)
             {
                 pin_ptr<unsigned char> ptr = &buffer[offset];
@@ -79,11 +81,13 @@ namespace System
                 return Position;
             }
 
+            [System::Security::Permissions::SecurityPermission(System::Security::Permissions::SecurityAction::Assert, UnmanagedCode = true)]
             void MemfsStream::SetLength(Int64 value)
             {
                 memfs_setsize(ptr2str(filename), value);
             }
 
+            [System::Security::Permissions::SecurityPermission(System::Security::Permissions::SecurityAction::Assert, UnmanagedCode = true)]
             void MemfsStream::Write(array<Byte>^ buffer, Int32 offset, Int32 count)
             {
                 pin_ptr<unsigned char> ptr = &buffer[offset];

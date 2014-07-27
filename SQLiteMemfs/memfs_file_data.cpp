@@ -14,7 +14,7 @@ void clear_file(memfs_file_data* pData);
 
 int create_file_data(memfs_file_data* pData, const char* zName)
 {
-    int nName;
+    size_t nName;
     memset(pData, 0, sizeof(memfs_file_data));
 
     nName = strlen(zName) + 1;
