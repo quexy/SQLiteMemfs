@@ -66,17 +66,17 @@ namespace System
             {
                 switch (origin)
                 {
-                case SeekOrigin::Begin:
-                    Position = offset;
-                    break;
-                case SeekOrigin::Current:
-                    Position = Position + offset;
-                    break;
-                case SeekOrigin::End:
-                    Position = Length - offset;
-                    break;
-                default:
-                    throw gcnew InvalidOperationException("Unrecognized SeekOrigin: " + origin.ToString());
+                    case SeekOrigin::Begin:
+                        Position = offset;
+                        break;
+                    case SeekOrigin::Current:
+                        Position = Position + offset;
+                        break;
+                    case SeekOrigin::End:
+                        Position = Length - offset;
+                        break;
+                    default:
+                        throw gcnew InvalidOperationException("Unrecognized SeekOrigin: " + origin.ToString());
                 }
                 return Position;
             }

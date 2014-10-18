@@ -4,7 +4,7 @@ using namespace System;
 using namespace System::IO;
 
 namespace System
-{ 
+{
     namespace Data
     {
         namespace SQLite

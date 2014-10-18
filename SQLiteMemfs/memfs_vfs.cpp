@@ -34,7 +34,7 @@ int memfs_vfs_Open(sqlite3_vfs* pVfs, const char* zName, sqlite3_file* pFile, in
     if (pObject->pData == NULL)
     {
         pObject->pData = (memfs_file_data*)malloc(sizeof(memfs_file_data));
-        if(pObject->pData == NULL) return SQLITE_NOMEM;
+        if (pObject->pData == NULL) return SQLITE_NOMEM;
 
         result = create_file_data(pObject->pData, zName);
         if (result != SQLITE_OK) { free(pObject->pData); return result; }
@@ -57,7 +57,7 @@ int memfs_vfs_Delete(sqlite3_vfs* pVfs, const char* zName, int syncDir)
 
     pPrev = NULL;
     pFile = (memfs_file_data*)pVfs->pAppData;
-    while(pFile != NULL)
+    while (pFile != NULL)
     {
         if (strcmp(zName, pFile->zName) == 0)
         {
@@ -84,7 +84,7 @@ int memfs_vfs_Delete(sqlite3_vfs* pVfs, const char* zName, int syncDir)
 
 int memfs_vfs_Access(sqlite3_vfs* pVfs, const char* zName, int flags, int* pResOut)
 {
-    if ( flags == 0 || (flags & SQLITE_ACCESS_EXISTS) == SQLITE_ACCESS_EXISTS)
+    if (flags == 0 || (flags & SQLITE_ACCESS_EXISTS) == SQLITE_ACCESS_EXISTS)
         *pResOut = (find_file_data(pVfs, zName) != NULL);
     else // not a file exsistence check
         *pResOut = 1;

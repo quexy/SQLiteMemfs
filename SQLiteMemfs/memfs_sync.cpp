@@ -13,7 +13,7 @@ static CRITICAL_SECTION memfs_mutex;
 
 void memfs_sync_enter()
 {
-    EnterCriticalSection(&memfs_mutex); 
+    EnterCriticalSection(&memfs_mutex);
 }
 
 

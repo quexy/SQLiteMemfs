@@ -19,12 +19,12 @@ MEMFS_EXTERN int memfs_init()
 {
     int result;
     memfs_sync_enter();
-    
+
     ++refCount;
     if (refCount == 1)
         sqlite3_vfs_register(get_vfs_object(), 1);
     result = refCount - 1;
-    
+
     memfs_sync_exit();
     return result;
 }
@@ -42,7 +42,7 @@ MEMFS_EXTERN int memfs_destroy()
         sqlite3_vfs* pVfs = get_vfs_object();
         sqlite3_vfs_unregister(pVfs);
 
-        while(pVfs->pAppData != NULL)
+        while (pVfs->pAppData != NULL)
         {
             pData = (memfs_file_data*)(pVfs->pAppData);
             pVfs->pAppData = pData->pNext;
@@ -86,7 +86,7 @@ MEMFS_EXTERN int memfs_readdata(const char* zName, void* data, int nSize, __int6
     pFile = (file_object*)malloc(sizeof(file_object));
     if (pFile == NULL) return 0;
 
-    result = get_vfs_object()->xOpen(get_vfs_object(), zName, (sqlite3_file*)pFile, SQLITE_OPEN_READONLY, &flags); 
+    result = get_vfs_object()->xOpen(get_vfs_object(), zName, (sqlite3_file*)pFile, SQLITE_OPEN_READONLY, &flags);
     if (result != SQLITE_OK) { free(pFile); return 0; }
 
     pFile->base.pMethods->xRead((sqlite3_file*)pFile, data, nSize, iOfst);
@@ -111,7 +111,7 @@ MEMFS_EXTERN int memfs_writedata(const char* zName, void* data, int nSize, __int
     pFile = (file_object*)malloc(sizeof(file_object));
     if (pFile == NULL) return result;
 
-    get_vfs_object()->xOpen(get_vfs_object(), zName, (sqlite3_file*)pFile, SQLITE_OPEN_CREATE, &flags); 
+    get_vfs_object()->xOpen(get_vfs_object(), zName, (sqlite3_file*)pFile, SQLITE_OPEN_CREATE, &flags);
     if (result != SQLITE_OK) { free(pFile); return result; }
 
     pFile->base.pMethods->xWrite((sqlite3_file*)pFile, data, nSize, iOfst);
@@ -119,7 +119,7 @@ MEMFS_EXTERN int memfs_writedata(const char* zName, void* data, int nSize, __int
 
     pFile->base.pMethods->xClose((sqlite3_file*)pFile);
     free(pFile);
-    
+
     return result;
 }
 
