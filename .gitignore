@@ -3,6 +3,7 @@ Release
 ipch
 bin
 obj
+.vs
 *.sdf
 *.opensdf
 *.suo
