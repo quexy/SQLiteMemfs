@@ -34,18 +34,18 @@ namespace System
 
             MemfsStream::!MemfsStream(void)
             {
-                GC::ReRegisterForFinalize(filename);
                 Destroy(false);
                 GC::KeepAlive(filename);
             }
 
-            void MemfsStream::Destroy(bool disposing)
+            void MemfsStream::Destroy(Boolean disposing)
             {
-                if (!disposed)
-                {
-                    disposed = true;
-                    Marshal::FreeHGlobal(filename);
-                }
+                if (disposed) return;
+                disposed = true;
+
+                if (filename == IntPtr::Zero) return;
+                Marshal::FreeHGlobal(filename);
+                filename = IntPtr::Zero;
             }
 
             void MemfsStream::Flush() { /* NOP */ }
@@ -56,6 +56,8 @@ namespace System
             [System::Security::Permissions::SecurityPermission(System::Security::Permissions::SecurityAction::Assert, UnmanagedCode = true)]
             Int32 MemfsStream::Read(array<Byte>^ buffer, Int32 offset, Int32 count)
             {
+                if (buffer->Length < offset + count)
+                    throw gcnew IndexOutOfRangeException("Max position would exceed array size");
                 pin_ptr<unsigned char> ptr = &buffer[offset];
                 Int32 size = memfs_readdata(ptr2str(filename), ptr, count, position);
                 position += size;
