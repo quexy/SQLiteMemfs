@@ -22,8 +22,8 @@ int create_file_data(memfs_file_data* pData, const char* zName)
     if (pData->zName == NULL) { clear_file(pData); return SQLITE_NOMEM; }
     strcpy_s(pData->zName, nName, zName);
 
-    pData->nLenght = 8192;
-    pData->pBuffer = malloc((size_t)(pData->nLenght));
+    pData->nLength = 8192;
+    pData->pBuffer = malloc((size_t)(pData->nLength));
     if (pData->pBuffer == NULL) { clear_file(pData); return SQLITE_NOMEM; }
 
     return SQLITE_OK;
@@ -48,7 +48,7 @@ int delete_file_data(memfs_file_data* pData)
     pData->iDeleted = 1;
 
     pData->nSize = 0;
-    pData->nLenght = 0;
+    pData->nLength = 0;
     if (pData->pBuffer != NULL)
         free(pData->pBuffer);
     pData->pBuffer = NULL;

@@ -38,7 +38,7 @@ int memfs_io_Write(sqlite3_file* pFile, const void* pBuf, int iAmt, sqlite3_int6
 
     newSize = iOfst + iAmt;
     newLength = (sqlite3_int64)(newSize * 1.7);
-    if (pData->nLenght < newSize)
+    if (pData->nLength < newSize)
     {
         void* newBuffer = (void*)malloc((size_t)newLength);
         if (newBuffer == NULL) return SQLITE_NOMEM;
@@ -48,10 +48,10 @@ int memfs_io_Write(sqlite3_file* pFile, const void* pBuf, int iAmt, sqlite3_int6
             free(pData->pBuffer);
         }
         pData->pBuffer = newBuffer;
-        pData->nLenght = newLength;
+        pData->nLength = newLength;
     }
 
-    memcpy_s(((char*)(pData->pBuffer)) + iOfst, (rsize_t)(pData->nLenght - iOfst), pBuf, iAmt);
+    memcpy_s(((char*)(pData->pBuffer)) + iOfst, (rsize_t)(pData->nLength - iOfst), pBuf, iAmt);
     pData->nSize = (pData->nSize < newSize) ? newSize : pData->nSize;
 
     return SQLITE_OK;

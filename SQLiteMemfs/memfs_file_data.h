@@ -12,7 +12,7 @@ struct memfs_file_data
     int nRef;
     int iDeleted;
     sqlite3_int64 nSize;
-    sqlite3_int64 nLenght;
+    sqlite3_int64 nLength;
     void* pBuffer;
 };
 
