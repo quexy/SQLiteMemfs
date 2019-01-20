@@ -51,6 +51,9 @@
     <ClInclude Include="memfs_sync.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="file_list_item.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="file_object.cpp">
@@ -81,6 +84,9 @@
       <Filter>Source Files\managed</Filter>
     </ClCompile>
     <ClCompile Include="memfs_sync.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="file_list_item.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

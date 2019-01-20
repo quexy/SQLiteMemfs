@@ -2,10 +2,12 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 #include "sqlite3.h"
 
 #include "memfs_file_data.h"
+#include "file_list_item.h"
 
 
 
@@ -26,18 +28,21 @@ int create_file_data(memfs_file_data* pData, const char* zName)
     pData->pBuffer = malloc((size_t)(pData->nLength));
     if (pData->pBuffer == NULL) { clear_file(pData); return SQLITE_NOMEM; }
 
+    file_list_item* pFiles = (file_list_item*)malloc(sizeof(file_list_item));
+    if (pFiles == NULL) { clear_file(pData); return SQLITE_NOMEM; }
+    pData->pRefs = pFiles->pNext = pFiles->pPrev = pFiles;
+
     return SQLITE_OK;
 }
 
 
 memfs_file_data* find_file_data(sqlite3_vfs* pVfs, const char* zName)
 {
-    memfs_file_data* pData = (memfs_file_data*)(pVfs->pAppData);
-    while (pData != NULL)
+    file_list_item* pHead = (file_list_item*)(pVfs->pAppData);
+    for (file_list_item* ptr = pHead->pNext; ptr != pHead; ptr = ptr->pNext)
     {
-        if (strcmp(pData->zName, zName) == 0)
-            return pData;
-        pData = pData->pNext;
+        memfs_file_data* pData = (memfs_file_data*)ptr->pObject;
+        if (strcmp(pData->zName, zName) == 0) return pData;
     }
     return NULL;
 }
@@ -74,4 +79,11 @@ void clear_file(memfs_file_data* pData)
     if (pData->zName != NULL)
         free(pData->zName);
     pData->zName = NULL;
+
+    if (pData->pRefs != NULL)
+    {
+        assert(pData->pRefs->pNext == pData->pRefs->pPrev);
+        destroy_list(pData->pRefs);
+        pData->pRefs = NULL;
+    }
 }

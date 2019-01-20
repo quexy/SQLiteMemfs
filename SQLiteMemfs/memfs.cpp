@@ -2,13 +2,14 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 #include "sqlite3.h"
 
-#include "file_object.h"
 #include "memfs.h"
 #include "memfs_sync.h"
 #include "vfs_object.h"
+#include "file_object.h"
 
 
 
@@ -42,14 +43,19 @@ MEMFS_EXTERN int memfs_destroy()
         sqlite3_vfs* pVfs = get_vfs_object();
         sqlite3_vfs_unregister(pVfs);
 
-        while (pVfs->pAppData != NULL)
+        file_list_item* pHead = (file_list_item*)pVfs->pAppData;
+        for (file_list_item* ptr = pHead->pNext; ptr != pHead; ptr = ptr->pNext)
         {
-            pData = (memfs_file_data*)(pVfs->pAppData);
-            pVfs->pAppData = pData->pNext;
+            pData = (memfs_file_data*)(ptr->pObject);
+            ptr->pPrev->pNext = ptr->pNext;
+            ptr->pNext->pPrev = ptr->pPrev;
 
-            pData->pNext = NULL;
-            if (pData->nRef == 0) destroy_file(pData);
-            else delete_file_data(pData);
+            void* temp = ptr;
+            ptr = ptr->pPrev;
+            free(temp);
+
+            assert(pData->nRef == 0);
+            destroy_file(pData);
         }
     }
     result = refCount;

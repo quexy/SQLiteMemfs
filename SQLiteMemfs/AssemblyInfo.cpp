@@ -14,7 +14,7 @@ using namespace System::Security::Permissions;
 [assembly:AssemblyConfigurationAttribute("")];
 [assembly:AssemblyCompanyAttribute("")];
 [assembly:AssemblyProductAttribute("SQLiteMemfs")];
-[assembly:AssemblyCopyrightAttribute("Copyright (c) 2012")];
+[assembly:AssemblyCopyrightAttribute("Copyright (c) 2012-2019")];
 [assembly:AssemblyTrademarkAttribute("")];
 [assembly:AssemblyCultureAttribute("")];
 

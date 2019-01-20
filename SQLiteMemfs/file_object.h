@@ -10,6 +10,7 @@ struct file_object
 {
     sqlite3_file base;
     memfs_file_data* pData;
+    int nLock;
 };
 
 sqlite3_io_methods* get_io_methods();

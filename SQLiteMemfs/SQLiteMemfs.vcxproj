@@ -178,6 +178,7 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="file_list_item.h" />
     <ClInclude Include="memfs_sync.h" />
     <ClInclude Include="SQLiteMemfs.h" />
     <ClInclude Include="MemfsStream.h" />
@@ -191,6 +192,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
+    <ClCompile Include="file_list_item.cpp" />
     <ClCompile Include="file_object.cpp" />
     <ClCompile Include="memfs_sync.cpp" />
     <ClCompile Include="SQLiteMemfs.cpp" />

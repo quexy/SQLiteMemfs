@@ -1,5 +1,7 @@
 #pragma unmanaged
 
+#include <stdlib.h>
+
 #include "sqlite3.h"
 
 #include "file_object.h"
@@ -28,6 +30,12 @@ static sqlite3_vfs vfs_object = {
     memfs_vfs_CurrentTime,
 };
 
-sqlite3_vfs* get_vfs_object(){
+sqlite3_vfs* get_vfs_object()
+{
+    if (vfs_object.pAppData == NULL)
+    {
+        file_list_item* pHead = (file_list_item*)malloc(sizeof(file_list_item));
+        vfs_object.pAppData = pHead->pNext = pHead->pPrev = pHead;
+    }
     return &vfs_object;
 }

@@ -2,14 +2,15 @@
 
 #include "sqlite3.h"
 
+#include "file_list_item.h"
 
 
 typedef struct memfs_file_data memfs_file_data;
 struct memfs_file_data
 {
     char* zName;
-    memfs_file_data* pNext;
     int nRef;
+    file_list_item* pRefs;
     int iDeleted;
     sqlite3_int64 nSize;
     sqlite3_int64 nLength;

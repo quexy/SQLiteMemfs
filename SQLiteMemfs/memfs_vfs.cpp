@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 #include <Windows.h>
 
@@ -39,12 +40,15 @@ int memfs_vfs_Open(sqlite3_vfs* pVfs, const char* zName, sqlite3_file* pFile, in
         result = create_file_data(pObject->pData, zName);
         if (result != SQLITE_OK) { free(pObject->pData); return result; }
 
-        pObject->pData->pNext = (memfs_file_data*)pVfs->pAppData;
-        pVfs->pAppData = pObject->pData;
+        result = add_link((file_list_item*)pVfs->pAppData, pObject->pData);
+        if (result != SQLITE_OK) { destroy_file(pObject->pData); return result; }
     }
     pObject->base.pMethods = get_io_methods();
     pObject->pData->iDeleted = 0;
     pObject->pData->nRef += 1;
+
+    result = add_link(pObject->pData->pRefs, pObject);
+    if (result != SQLITE_OK) { destroy_file(pObject->pData); return result; }
 
     return SQLITE_OK;
 }
@@ -52,42 +56,21 @@ int memfs_vfs_Open(sqlite3_vfs* pVfs, const char* zName, sqlite3_file* pFile, in
 
 int memfs_vfs_Delete(sqlite3_vfs* pVfs, const char* zName, int syncDir)
 {
-    memfs_file_data* pPrev;
-    memfs_file_data* pFile;
+    memfs_file_data* pFile = find_file_data(pVfs, zName);
+    while (pFile == NULL) return SQLITE_OK;
 
-    pPrev = NULL;
-    pFile = (memfs_file_data*)pVfs->pAppData;
-    while (pFile != NULL)
-    {
-        if (strcmp(zName, pFile->zName) == 0)
-        {
-            if (pFile->nRef == 0)
-            {
-                if (pPrev != NULL)
-                    pPrev->pNext = pFile->pNext;
-                else // no prev
-                    pVfs->pAppData = pFile->pNext;
-                destroy_file(pFile);
-            }
-            else
-            {
-                delete_file_data(pFile);
-            }
-            return SQLITE_OK;
-        }
-        pPrev = pFile;
-        pFile = pFile->pNext;
-    }
+    assert(pFile->nRef == 0);
+    del_link((file_list_item*)pVfs->pAppData, pFile);
+    destroy_file(pFile);
+
     return SQLITE_OK;
 }
 
 
 int memfs_vfs_Access(sqlite3_vfs* pVfs, const char* zName, int flags, int* pResOut)
 {
-    if (flags == 0 || (flags & SQLITE_ACCESS_EXISTS) == SQLITE_ACCESS_EXISTS)
-        *pResOut = (find_file_data(pVfs, zName) != NULL);
-    else // not a file exsistence check
-        *pResOut = 1;
+    *pResOut = 1; // if not a file exsistence check, then it's okay
+    if (flags == SQLITE_ACCESS_EXISTS) *pResOut = (find_file_data(pVfs, zName) != NULL);
     return SQLITE_OK;
 }
 
@@ -147,7 +130,7 @@ void memfs_vfs_DlError(sqlite3_vfs* pVfs, int nByte, char* zErrMsg)
 }
 
 
-void (*memfs_vfs_DlSym(sqlite3_vfs* pVfs, void* zBuf, const char* zName))(void)
+void(*memfs_vfs_DlSym(sqlite3_vfs* pVfs, void* zBuf, const char* zName))(void)
 {
     return pVfs->pNext->xDlSym(pVfs->pNext, zBuf, zName);
 }

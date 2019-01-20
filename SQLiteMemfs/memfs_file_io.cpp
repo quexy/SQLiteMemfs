@@ -6,12 +6,14 @@
 #include "sqlite3.h"
 
 #include "file_object.h"
+#include "file_list_item.h"
 
 
 
 int memfs_io_Close(sqlite3_file* pFile)
 {
     ((file_object*)pFile)->pData->nRef -= 1;
+    del_link(((file_object*)pFile)->pData->pRefs, pFile);
     return SQLITE_OK;
 }
 
@@ -60,6 +62,8 @@ int memfs_io_Write(sqlite3_file* pFile, const void* pBuf, int iAmt, sqlite3_int6
 
 int memfs_io_Truncate(sqlite3_file* pFile, sqlite3_int64 size)
 {
+    memfs_file_data* pData = ((file_object*)pFile)->pData;
+    if (pData->nSize > size) return SQLITE_INTERNAL;
     ((file_object*)pFile)->pData->nSize = size;
     return SQLITE_OK;
 }
@@ -78,14 +82,55 @@ int memfs_io_FileSize(sqlite3_file* pFile, sqlite3_int64 *pSize)
 }
 
 
+int max_lock(int nLock)
+{
+    switch (nLock)
+    {
+        case SQLITE_LOCK_EXCLUSIVE:
+            return SQLITE_LOCK_NONE;
+        case SQLITE_LOCK_PENDING:
+            return SQLITE_LOCK_RESERVED;
+        case SQLITE_LOCK_RESERVED:
+            return SQLITE_LOCK_SHARED;
+        case SQLITE_LOCK_SHARED:
+            return SQLITE_LOCK_SHARED;
+        case SQLITE_LOCK_NONE:
+            return SQLITE_LOCK_EXCLUSIVE;
+        default: return SQLITE_LOCK_NONE;
+    }
+}
+
+
 int memfs_io_Lock(sqlite3_file* pFile, int nLock)
 {
+    file_object* pObject;
+    file_list_item* pHead;
+    int maxLock = max_lock(nLock);
+
+    pObject = (file_object*)pFile;
+    // a higher level lock already held
+    if (((file_object*)pFile)->nLock >= nLock) return SQLITE_OK;
+
+    pHead = pObject->pData->pRefs;
+    for (file_list_item* ptr = pHead->pNext; ptr != pHead; ptr = ptr->pNext)
+    {
+        file_object* pObj = (file_object*)ptr->pObject;
+        if (pObj != pObject && pObj->nLock > maxLock)
+            return SQLITE_BUSY;
+    }
+
+    // no conflict; execute
+    pObject->nLock = nLock;
+
     return SQLITE_OK;
 }
 
 
 int memfs_io_Unlock(sqlite3_file* pFile, int nLock)
 {
+    file_object* pObject = (file_object*)pFile;
+    if (pObject->nLock < nLock) return SQLITE_ERROR;
+    pObject->nLock = nLock;
     return SQLITE_OK;
 }
 
@@ -93,6 +138,12 @@ int memfs_io_Unlock(sqlite3_file* pFile, int nLock)
 int memfs_io_CheckReservedLock(sqlite3_file* pFile, int *pResOut)
 {
     *pResOut = 0;
+    file_list_item* pHead = ((file_object*)pFile)->pData->pRefs;
+    for (file_list_item* ptr = pHead->pNext; ptr != pHead; ptr = ptr->pNext)
+    {
+        file_object* pObj = (file_object*)ptr->pObject;
+        if (pObj->nLock >= SQLITE_LOCK_RESERVED) *pResOut += 1;
+    }
     return SQLITE_OK;
 }
 
