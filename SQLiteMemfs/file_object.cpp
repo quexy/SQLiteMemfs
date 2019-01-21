@@ -15,7 +15,7 @@ static sqlite3_io_methods memfs_io_methods = {
     memfs_io_Close,
     memfs_io_Read,
     memfs_io_Write,
-    memfs_io_Truncate,
+    memfs_io_Resize,
     memfs_io_Sync,
     memfs_io_FileSize,
     memfs_io_Lock,

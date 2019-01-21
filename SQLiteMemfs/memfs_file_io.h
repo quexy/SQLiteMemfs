@@ -6,7 +6,7 @@
 int memfs_io_Close(sqlite3_file*);
 int memfs_io_Read(sqlite3_file*, void*, int iAmt, sqlite3_int64 iOfst);
 int memfs_io_Write(sqlite3_file*, const void*, int iAmt, sqlite3_int64 iOfst);
-int memfs_io_Truncate(sqlite3_file*, sqlite3_int64 size);
+int memfs_io_Resize(sqlite3_file*, sqlite3_int64 size);
 int memfs_io_Sync(sqlite3_file*, int flags);
 int memfs_io_FileSize(sqlite3_file*, sqlite3_int64 *pSize);
 

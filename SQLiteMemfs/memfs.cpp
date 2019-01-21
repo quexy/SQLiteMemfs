@@ -91,7 +91,7 @@ MEMFS_EXTERN bool memfs_setsize(const char* zName, __int64 nSize)
     while (pFile->pMethods->xLock(pFile, SQLITE_LOCK_SHARED) != SQLITE_OK) sqlite3_sleep(10);
     while (pFile->pMethods->xLock(pFile, SQLITE_LOCK_EXCLUSIVE) != SQLITE_OK) sqlite3_sleep(10);
 
-    result = pFile->pMethods->xWrite(pFile, NULL, 1, nSize - 1);
+    result = pFile->pMethods->xTruncate(pFile, nSize);
 
     pFile->pMethods->xUnlock(pFile, SQLITE_LOCK_SHARED);
     pFile->pMethods->xUnlock(pFile, SQLITE_LOCK_NONE);

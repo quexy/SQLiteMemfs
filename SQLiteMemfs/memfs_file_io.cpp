@@ -27,15 +27,16 @@ int memfs_io_Read(sqlite3_file* pFile, void* pBuf, int iAmt, sqlite3_int64 iOfst
     sqlite3_uint64 nOffset;
     memfs_file_data* pData = ((file_object*)pFile)->pData;
     if (pData->iDeleted == 1) return SQLITE_IOERR;
+    if (iOfst < 0) return SQLITE_IOERR;
     if (iAmt <= 0) return SQLITE_OK;
 
-    memset(pBuf, 0, iAmt);
-    if (pData->nSize - iOfst <= 0) return SQLITE_IOERR_SHORT_READ;
+    if (pData->nSize - iOfst <= 0)
+    {
+        memset(pBuf, 0, iAmt);
+        return SQLITE_IOERR_SHORT_READ;
+    }
 
-    nOffset = iOfst;
-    if (nOffset < 0)nOffset = 0;
-
-    nDone = 0;
+    nDone = 0; nOffset = iOfst;
     for (data_chunk* ptr = pData->pChunks; ptr != NULL && nDone < iAmt; ptr = ptr->pNext)
     {
         if (nOffset >= ptr->nSize) nOffset -= ptr->nSize;
@@ -49,6 +50,7 @@ int memfs_io_Read(sqlite3_file* pFile, void* pBuf, int iAmt, sqlite3_int64 iOfst
         }
     }
     assert(iAmt >= nDone);
+    if (iAmt > nDone) memset((char*)pBuf + nDone, 0, iAmt - nDone);
     return (iAmt == nDone) ? SQLITE_OK : SQLITE_IOERR_SHORT_READ;
 }
 
@@ -59,13 +61,12 @@ int memfs_io_Write(sqlite3_file* pFile, const void* pBuf, int iAmt, sqlite3_int6
     sqlite3_int64 nOffset;
     memfs_file_data* pData = ((file_object*)pFile)->pData;
     if (pData->iDeleted == 1) return SQLITE_IOERR;
+    if (iOfst < 0) return SQLITE_IOERR;
     if (iAmt <= 0) return SQLITE_OK;
 
-    nOffset = iOfst;
-    if (nOffset < 0) nOffset = 0;
-    if (nOffset > LLONG_MAX - iAmt) return SQLITE_IOERR;
+    if (iOfst > LLONG_MAX - iAmt) return SQLITE_IOERR;
 
-    nDone = 0; nShift = 0;
+    nDone = 0; nShift = 0; nOffset = iOfst;
     for (data_chunk* ptr = pData->pChunks; ptr != NULL && nDone < iAmt; ptr = ptr->pNext)
     {
         if (nShift < MAX_SHIFT) nShift += 1;
@@ -102,11 +103,15 @@ int memfs_io_Write(sqlite3_file* pFile, const void* pBuf, int iAmt, sqlite3_int6
 }
 
 
-int memfs_io_Truncate(sqlite3_file* pFile, sqlite3_int64 size)
+int memfs_io_Resize(sqlite3_file* pFile, sqlite3_int64 size)
 {
     memfs_file_data* pData = ((file_object*)pFile)->pData;
-    if (pData->nSize > size) return SQLITE_INTERNAL;
-    ((file_object*)pFile)->pData->nSize = size;
+    if (pData->nSize < size)
+    {
+        if (size > 10) return memfs_io_Write(pFile, NULL, 1, size - 1);
+        else /* small */ return memfs_io_Write(pFile, NULL, (int)size, 0);
+    }
+    pData->nSize = size;
     return SQLITE_OK;
 }
 
