@@ -4,14 +4,13 @@
 #include <string.h>
 #include <assert.h>
 
-#include <Windows.h>
-
 #include "sqlite3.h"
 
 #include "file_object.h"
 #include "memfs_file_data.h"
 #include "memfs_file_io.h"
 #include "memfs_vfs.h"
+#include "critical_section.h"
 
 
 
@@ -19,7 +18,7 @@
 
 int memfs_vfs_Open(sqlite3_vfs* pVfs, const char* zName, sqlite3_file* pFile, int flags, int* pOutFlags)
 {
-    int result;
+    int result = SQLITE_OK;
     file_object* pObject = (file_object*)pFile;
 
     memset(pObject, 0, sizeof(file_object));
@@ -34,23 +33,32 @@ int memfs_vfs_Open(sqlite3_vfs* pVfs, const char* zName, sqlite3_file* pFile, in
 
     if (pObject->pData == NULL)
     {
-        pObject->pData = (memfs_file_data*)malloc(sizeof(memfs_file_data));
-        if (pObject->pData == NULL) return SQLITE_NOMEM;
+        void* pSyncRoot = ((file_list_item*)pVfs->pAppData)->pObject;
+        enter_critical_section(pSyncRoot);
 
-        result = create_file_data(pObject->pData, zName);
-        if (result != SQLITE_OK) { free(pObject->pData); return result; }
+        pObject->pData = find_file_data(pVfs, zName);
+        if (pObject->pData == NULL)
+        {
+            pObject->pData = (memfs_file_data*)malloc(sizeof(memfs_file_data));
+            if (pObject->pData == NULL) result = SQLITE_NOMEM;
 
-        result = add_link((file_list_item*)pVfs->pAppData, pObject->pData);
-        if (result != SQLITE_OK) { destroy_file(pObject->pData); return result; }
+            if (result == SQLITE_OK) result = init_file_data(pObject->pData, zName);
+            if (result == SQLITE_OK) result = add_link((file_list_item*)pVfs->pAppData, pObject->pData);
+
+            if (result != SQLITE_OK) { destroy_file(pObject->pData); }
+        }
+        
+        leave_critical_section(pSyncRoot);
+        if (result != SQLITE_OK) return result;
     }
-    pObject->base.pMethods = get_io_methods();
+    pFile->pMethods = get_io_methods();
     pObject->pData->iDeleted = 0;
     pObject->pData->nRef += 1;
 
     result = add_link(pObject->pData->pRefs, pObject);
-    if (result != SQLITE_OK) { destroy_file(pObject->pData); return result; }
+    if (result != SQLITE_OK) destroy_file(pObject->pData);
 
-    return SQLITE_OK;
+    return result;
 }
 
 

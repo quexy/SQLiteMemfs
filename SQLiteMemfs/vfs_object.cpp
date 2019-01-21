@@ -14,9 +14,9 @@ static sqlite3_vfs vfs_object = {
     1,
     sizeof(file_object),
     255,
-    0,
+    NULL,
     "memfs",
-    0,
+    NULL,
     memfs_vfs_Open,
     memfs_vfs_Delete,
     memfs_vfs_Access,
@@ -33,9 +33,6 @@ static sqlite3_vfs vfs_object = {
 sqlite3_vfs* get_vfs_object()
 {
     if (vfs_object.pAppData == NULL)
-    {
-        file_list_item* pHead = (file_list_item*)malloc(sizeof(file_list_item));
-        vfs_object.pAppData = pHead->pNext = pHead->pPrev = pHead;
-    }
+        vfs_object.pAppData = create_list();
     return &vfs_object;
 }

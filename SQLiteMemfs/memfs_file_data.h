@@ -18,7 +18,7 @@ struct memfs_file_data
 };
 
 
-int create_file_data(memfs_file_data* pData, const char* zName);
+int init_file_data(memfs_file_data* pData, const char* zName);
 
 memfs_file_data* find_file_data(sqlite3_vfs* pVfs, const char* zName);
 

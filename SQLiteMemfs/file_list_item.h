@@ -14,4 +14,6 @@ int add_link(file_list_item* pHead, void* pObject);
 
 int del_link(file_list_item* pHead, void* pObject);
 
+file_list_item* create_list();
+
 int destroy_list(file_list_item* pHead);

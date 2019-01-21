@@ -8,6 +8,8 @@
 #include "file_object.h"
 #include "file_list_item.h"
 
+int max_lock(int nLock);
+
 
 
 int memfs_io_Close(sqlite3_file* pFile)
@@ -23,9 +25,10 @@ int memfs_io_Read(sqlite3_file* pFile, void* pBuf, int iAmt, sqlite3_int64 iOfst
     int nAmount = 0;
     memfs_file_data* pData = ((file_object*)pFile)->pData;
     if (pData->iDeleted == 1) return SQLITE_IOERR;
+    if (iAmt <= 0) return SQLITE_OK;
 
     nAmount = (int)(pData->nSize - iOfst);
-    if (nAmount < 0) return SQLITE_IOERR_SHORT_READ;
+    if (nAmount <= 0) return SQLITE_IOERR_SHORT_READ;
 
     memcpy_s(pBuf, iAmt, ((char*)(pData->pBuffer)) + iOfst, ((iAmt < nAmount) ? iAmt : nAmount));
     return (iAmt <= nAmount) ? SQLITE_OK : SQLITE_IOERR_SHORT_READ;
@@ -82,25 +85,6 @@ int memfs_io_FileSize(sqlite3_file* pFile, sqlite3_int64 *pSize)
 }
 
 
-int max_lock(int nLock)
-{
-    switch (nLock)
-    {
-        case SQLITE_LOCK_EXCLUSIVE:
-            return SQLITE_LOCK_NONE;
-        case SQLITE_LOCK_PENDING:
-            return SQLITE_LOCK_RESERVED;
-        case SQLITE_LOCK_RESERVED:
-            return SQLITE_LOCK_SHARED;
-        case SQLITE_LOCK_SHARED:
-            return SQLITE_LOCK_SHARED;
-        case SQLITE_LOCK_NONE:
-            return SQLITE_LOCK_EXCLUSIVE;
-        default: return SQLITE_LOCK_NONE;
-    }
-}
-
-
 int memfs_io_Lock(sqlite3_file* pFile, int nLock)
 {
     file_object* pObject;
@@ -108,7 +92,7 @@ int memfs_io_Lock(sqlite3_file* pFile, int nLock)
     int maxLock = max_lock(nLock);
 
     pObject = (file_object*)pFile;
-    // a higher level lock already held
+    // same or higher level lock already held
     if (((file_object*)pFile)->nLock >= nLock) return SQLITE_OK;
 
     pHead = pObject->pData->pRefs;
@@ -163,4 +147,23 @@ int memfs_io_SectorSize(sqlite3_file* pFile)
 int memfs_io_DeviceCharacteristics(sqlite3_file* pFile)
 {
     return 0;
+}
+
+
+int max_lock(int nLock)
+{
+    switch (nLock)
+    {
+        case SQLITE_LOCK_EXCLUSIVE:
+            return SQLITE_LOCK_NONE;
+        case SQLITE_LOCK_PENDING:
+            return SQLITE_LOCK_RESERVED;
+        case SQLITE_LOCK_RESERVED:
+            return SQLITE_LOCK_SHARED;
+        case SQLITE_LOCK_SHARED:
+            return SQLITE_LOCK_SHARED;
+        case SQLITE_LOCK_NONE:
+            return SQLITE_LOCK_EXCLUSIVE;
+        default: return SQLITE_LOCK_NONE;
+    }
 }

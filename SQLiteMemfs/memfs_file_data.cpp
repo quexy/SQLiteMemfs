@@ -9,12 +9,11 @@
 #include "memfs_file_data.h"
 #include "file_list_item.h"
 
-
-
 void clear_file(memfs_file_data* pData);
 
 
-int create_file_data(memfs_file_data* pData, const char* zName)
+
+int init_file_data(memfs_file_data* pData, const char* zName)
 {
     size_t nName;
     memset(pData, 0, sizeof(memfs_file_data));
@@ -28,9 +27,8 @@ int create_file_data(memfs_file_data* pData, const char* zName)
     pData->pBuffer = malloc((size_t)(pData->nLength));
     if (pData->pBuffer == NULL) { clear_file(pData); return SQLITE_NOMEM; }
 
-    file_list_item* pFiles = (file_list_item*)malloc(sizeof(file_list_item));
-    if (pFiles == NULL) { clear_file(pData); return SQLITE_NOMEM; }
-    pData->pRefs = pFiles->pNext = pFiles->pPrev = pFiles;
+    pData->pRefs = create_list(); // initialize file list
+    if (pData->pRefs == NULL) { clear_file(pData); return SQLITE_NOMEM; }
 
     return SQLITE_OK;
 }
@@ -64,8 +62,12 @@ int delete_file_data(memfs_file_data* pData)
 
 int destroy_file(memfs_file_data* pData)
 {
-    clear_file(pData);
-    free(pData);
+    if (pData != NULL)
+    {
+        clear_file(pData);
+        free(pData);
+    }
+
     return SQLITE_OK;
 }
 
