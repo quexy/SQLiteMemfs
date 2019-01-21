@@ -13,6 +13,11 @@ namespace SQLiteMemfs.Demo
         {
             try
             {
+                using (var memfs = new Memfs())
+                {
+                    CheckStreamReadWrite(memfs, "C:\\temp\\test.bin", "X:\\test.bin", 6000);
+                }
+
                 var guid = Guid.NewGuid();
                 using (var memfs = new Memfs())
                 {
@@ -49,6 +54,46 @@ namespace SQLiteMemfs.Demo
             {
                 Console.Write("Press any key to continue . . . ");
                 Console.ReadKey(true); Console.WriteLine();
+            }
+        }
+
+        private static void CheckStreamReadWrite(Memfs memfs, string fileName, string memfsName, int bufferSize)
+        {
+            using (var fileStream = System.IO.File.OpenRead(fileName))
+            using (var memfsStream = memfs.GetStream(memfsName))
+            {
+                //memfsStream.SetLength(fileStream.Length);
+
+                int amount = 0;
+                var buffer = new byte[bufferSize];
+                while ((amount = fileStream.Read(buffer, 0, buffer.Length)) > 0)
+                    memfsStream.Write(buffer, 0, amount);
+
+                if (fileStream.Position != memfsStream.Position)
+                    Console.WriteLine("finished at different positions");
+                if (fileStream.Length != memfsStream.Length)
+                    Console.WriteLine("different file lengths");
+            }
+
+            using (var fileStream = System.IO.File.OpenRead(fileName))
+            using (var memfsStream = memfs.GetStream(memfsName))
+            {
+                int total = 0, amount = 0;
+                var buffer = new byte[bufferSize];
+                var data = new byte[buffer.Length];
+                while ((amount = fileStream.Read(buffer, 0, buffer.Length)) > 0)
+                {
+                    var len = memfsStream.Read(data, 0, amount);
+                    if (len != amount) Console.WriteLine("did not read correct amount");
+                    if (fileStream.Position != memfsStream.Position) Console.WriteLine("streams at different positions");
+                    Console.WriteLine("file: {0}; memfs: {1}", fileStream.Position, memfsStream.Position);
+                    for (int i = 0; i < Math.Min(len, amount); ++i)
+                        if (buffer[i] != data[i]) Console.WriteLine("mismatch at position {0}", total + i);
+
+                    total += len;
+                    if (amount != len) fileStream.Seek(total, System.IO.SeekOrigin.Begin);
+                }
+                Console.WriteLine("compare finished");
             }
         }
 

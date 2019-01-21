@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 #include "sqlite3.h"
 
@@ -14,52 +15,88 @@ int max_lock(int nLock);
 
 int memfs_io_Close(sqlite3_file* pFile)
 {
-    ((file_object*)pFile)->pData->nRef -= 1;
-    del_link(((file_object*)pFile)->pData->pRefs, pFile);
+    memfs_file_data* pData = ((file_object*)pFile)->pData;
+    pData->nRef -= 1; del_link(pData->pRefs, pFile);
     return SQLITE_OK;
 }
 
 
 int memfs_io_Read(sqlite3_file* pFile, void* pBuf, int iAmt, sqlite3_int64 iOfst)
 {
-    int nAmount = 0;
+    int nDone;
+    sqlite3_uint64 nOffset;
     memfs_file_data* pData = ((file_object*)pFile)->pData;
     if (pData->iDeleted == 1) return SQLITE_IOERR;
     if (iAmt <= 0) return SQLITE_OK;
 
-    nAmount = (int)(pData->nSize - iOfst);
-    if (nAmount <= 0) return SQLITE_IOERR_SHORT_READ;
+    memset(pBuf, 0, iAmt);
+    if (pData->nSize - iOfst <= 0) return SQLITE_IOERR_SHORT_READ;
 
-    memcpy_s(pBuf, iAmt, ((char*)(pData->pBuffer)) + iOfst, ((iAmt < nAmount) ? iAmt : nAmount));
-    return (iAmt <= nAmount) ? SQLITE_OK : SQLITE_IOERR_SHORT_READ;
+    nOffset = iOfst;
+    if (nOffset < 0)nOffset = 0;
+
+    nDone = 0;
+    for (data_chunk* ptr = pData->pChunks; ptr != NULL && nDone < iAmt; ptr = ptr->pNext)
+    {
+        if (nOffset >= ptr->nSize) nOffset -= ptr->nSize;
+        else /* offset within this chunk */
+        {
+            int nSource = iAmt - nDone;
+            int nTarget = ptr->nSize - (int)nOffset;
+            int nAmount = (nSource < nTarget) ? nSource : nTarget;
+            memcpy_s((char*)pBuf + nDone, nAmount, ((char*)ptr->pBuffer) + nOffset, nAmount);
+            nDone += nAmount; nOffset = 0;
+        }
+    }
+    assert(iAmt >= nDone);
+    return (iAmt == nDone) ? SQLITE_OK : SQLITE_IOERR_SHORT_READ;
 }
 
 
 int memfs_io_Write(sqlite3_file* pFile, const void* pBuf, int iAmt, sqlite3_int64 iOfst)
 {
-    sqlite3_int64 newSize, newLength;
+    int nDone, nShift;
+    sqlite3_int64 nOffset;
     memfs_file_data* pData = ((file_object*)pFile)->pData;
     if (pData->iDeleted == 1) return SQLITE_IOERR;
+    if (iAmt <= 0) return SQLITE_OK;
 
-    newSize = iOfst + iAmt;
-    newLength = (sqlite3_int64)(newSize * 1.7);
-    if (newSize > RSIZE_MAX) return SQLITE_IOERR;
-    if (newLength > RSIZE_MAX) newLength = SIZE_MAX;
-    if (pData->nLength < newSize)
+    nOffset = iOfst;
+    if (nOffset < 0) nOffset = 0;
+    if (nOffset > LLONG_MAX - iAmt) return SQLITE_IOERR;
+
+    nDone = 0; nShift = 0;
+    for (data_chunk* ptr = pData->pChunks; ptr != NULL && nDone < iAmt; ptr = ptr->pNext)
     {
-        void* newBuffer = (void*)malloc((size_t)newLength);
-        if (newBuffer == NULL) return SQLITE_NOMEM;
-        if (pData->pBuffer != NULL)
+        if (nShift < MAX_SHIFT) nShift += 1;
+        if (nOffset >= ptr->nSize) nOffset -= ptr->nSize;
+        else /* offset within this chunk */
         {
-            memcpy_s(newBuffer, (rsize_t)newLength, pData->pBuffer, (rsize_t)pData->nSize);
-            free(pData->pBuffer);
+            int nSource = iAmt - nDone;
+            int nTarget = ptr->nSize - (int)nOffset;
+            int nAmount = (nSource < nTarget) ? nSource : nTarget;
+
+            if (pBuf == NULL) memset(ptr->pBuffer, 0, nTarget);
+            else memcpy_s((char*)ptr->pBuffer + nOffset, nAmount, (char*)pBuf + nDone, nAmount);
+            nDone += nAmount; nOffset = 0;
         }
-        pData->pBuffer = newBuffer;
-        pData->nLength = newLength;
+
+        if (nDone < iAmt && ptr->pNext == NULL)
+        {
+            data_chunk* pNext = (data_chunk*)malloc(sizeof(data_chunk));
+            if (pNext == NULL) { return SQLITE_IOERR_NOMEM; }
+
+            pNext->pNext = NULL;
+            pNext->nSize = CHUNK_BASE << nShift;
+            pNext->pBuffer = malloc(pNext->nSize);
+            if (pNext->pBuffer == NULL) { free(pNext); return SQLITE_IOERR_NOMEM; }
+            if (pBuf == NULL) memset(pNext->pBuffer, 0, pNext->nSize);
+            ptr->pNext = pNext;
+        }
     }
 
-    memcpy_s(((char*)(pData->pBuffer)) + iOfst, (rsize_t)(pData->nLength - iOfst), pBuf, iAmt);
-    pData->nSize = (pData->nSize < newSize) ? newSize : pData->nSize;
+    if (pData->nSize < iOfst + iAmt)
+        pData->nSize = iOfst + iAmt;
 
     return SQLITE_OK;
 }
@@ -136,7 +173,8 @@ int memfs_io_CheckReservedLock(sqlite3_file* pFile, int *pResOut)
 
 int memfs_io_FileControl(sqlite3_file* pFile, int op, void *pArg)
 {
-    return SQLITE_OK;
+    // no opcodes recognised
+    return SQLITE_NOTFOUND;
 }
 
 

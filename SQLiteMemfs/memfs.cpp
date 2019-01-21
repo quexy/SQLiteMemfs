@@ -77,54 +77,54 @@ MEMFS_EXTERN __int64 memfs_getsize(const char* zName)
 
 MEMFS_EXTERN bool memfs_setsize(const char* zName, __int64 nSize)
 {
-    memfs_file_data* pData = find_file_data(get_vfs_object(), zName);
-    if (pData == NULL || pData->iDeleted == 1) return false;
+    int result, flags;
+    sqlite3_file* pFile = NULL;
+    result = flags = 0;
 
-    // enlarge buffer if needed
-    if (pData->nLength <= nSize)
-    {
-        __int64 nBuf = nSize - pData->nLength;
-        if (nBuf > INT_MAX) return false;
-        void* pBuffer = malloc((size_t)nBuf);
-        if (pBuffer == NULL) return false;
+    sqlite3_vfs* pVfs = get_vfs_object();
+    pFile = (sqlite3_file*)malloc(pVfs->szOsFile);
+    if (pFile == NULL) return false;
 
-        memset(pBuffer, 0, (size_t)nBuf);
-        memfs_writedata(zName, pBuffer, (int)nBuf, pData->nLength);
-        free(pBuffer);
-    }
+    result = pVfs->xOpen(pVfs, zName, pFile, SQLITE_OPEN_CREATE, &flags);
+    if (result != SQLITE_OK) { free(pFile); return false; }
 
-    // do not disclose 
-    if (nSize > pData->nSize)
-    {
-        void* pGarbage = ((char*)pData->pBuffer) + pData->nSize;
-        memset(pGarbage, 0, (size_t)(nSize - pData->nSize));
-    }
+    while (pFile->pMethods->xLock(pFile, SQLITE_LOCK_SHARED) != SQLITE_OK) sqlite3_sleep(10);
+    while (pFile->pMethods->xLock(pFile, SQLITE_LOCK_EXCLUSIVE) != SQLITE_OK) sqlite3_sleep(10);
 
-    if (nSize > 0) pData->nSize = nSize;
-    else /* zero */ pData->nSize = 0;
-    return true;
+    result = pFile->pMethods->xWrite(pFile, NULL, 1, nSize - 1);
+
+    pFile->pMethods->xUnlock(pFile, SQLITE_LOCK_SHARED);
+    pFile->pMethods->xUnlock(pFile, SQLITE_LOCK_NONE);
+    pFile->pMethods->xClose(pFile);
+    free(pFile);
+
+    return (result == SQLITE_OK) ? true : false;
 }
 
 
 MEMFS_EXTERN int memfs_readdata(const char* zName, void* data, int nSize, __int64 iOfst)
 {
     int result, flags;
-    file_object* pFile = NULL;
+    sqlite3_file* pFile = NULL;
     flags = 0; result = 0;
 
-    pFile = (file_object*)malloc(sizeof(file_object));
-    if (pFile == NULL) return 0;
+    sqlite3_vfs* pVfs = get_vfs_object();
+    pFile = (sqlite3_file*)malloc(pVfs->szOsFile);
+    if (pFile == NULL) return result;
 
-    result = get_vfs_object()->xOpen(get_vfs_object(), zName, (sqlite3_file*)pFile, SQLITE_OPEN_READONLY, &flags);
-    if (result != SQLITE_OK) { free(pFile); return 0; }
+    get_vfs_object()->xOpen(get_vfs_object(), zName, (sqlite3_file*)pFile, SQLITE_OPEN_CREATE, &flags);
+    if (result != SQLITE_OK) { free(pFile); return result; }
 
-    pFile->base.pMethods->xRead((sqlite3_file*)pFile, data, nSize, iOfst);
+    while (pFile->pMethods->xLock(pFile, SQLITE_LOCK_SHARED) != SQLITE_OK) sqlite3_sleep(10);
 
-    result = (int)(pFile->pData->nSize - iOfst);
-    if (result > nSize) result = nSize;
-    if (result < 0) result = 0;
+    result = pFile->pMethods->xRead(pFile, data, nSize, iOfst);
+    if (result == SQLITE_OK) { result = nSize; }
+    else if (result == SQLITE_IOERR_SHORT_READ)
+        result = (int)(((file_object*)pFile)->pData->nSize - iOfst);
 
-    pFile->base.pMethods->xClose((sqlite3_file*)pFile);
+    pFile->pMethods->xUnlock(pFile, SQLITE_LOCK_NONE);
+
+    pFile->pMethods->xClose(pFile);
     free(pFile);
 
     return result;
@@ -134,19 +134,26 @@ MEMFS_EXTERN int memfs_readdata(const char* zName, void* data, int nSize, __int6
 MEMFS_EXTERN int memfs_writedata(const char* zName, void* data, int nSize, __int64 iOfst)
 {
     int result, flags;
-    file_object* pFile = NULL;
+    sqlite3_file* pFile = NULL;
     flags = 0; result = 0;
 
-    pFile = (file_object*)malloc(sizeof(file_object));
+    sqlite3_vfs* pVfs = get_vfs_object();
+    pFile = (sqlite3_file*)malloc(pVfs->szOsFile);
     if (pFile == NULL) return result;
 
     get_vfs_object()->xOpen(get_vfs_object(), zName, (sqlite3_file*)pFile, SQLITE_OPEN_CREATE, &flags);
     if (result != SQLITE_OK) { free(pFile); return result; }
 
-    pFile->base.pMethods->xWrite((sqlite3_file*)pFile, data, nSize, iOfst);
+    while (pFile->pMethods->xLock(pFile, SQLITE_LOCK_SHARED) != SQLITE_OK) sqlite3_sleep(10);
+    while (pFile->pMethods->xLock(pFile, SQLITE_LOCK_EXCLUSIVE) != SQLITE_OK) sqlite3_sleep(10);
+
+    result = pFile->pMethods->xWrite(pFile, data, nSize, iOfst);
     if (result == SQLITE_OK) { result = nSize; }
 
-    pFile->base.pMethods->xClose((sqlite3_file*)pFile);
+    pFile->pMethods->xUnlock(pFile, SQLITE_LOCK_SHARED);
+    pFile->pMethods->xUnlock(pFile, SQLITE_LOCK_NONE);
+
+    pFile->pMethods->xClose(pFile);
     free(pFile);
 
     return result;

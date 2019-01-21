@@ -23,9 +23,11 @@ int init_file_data(memfs_file_data* pData, const char* zName)
     if (pData->zName == NULL) { clear_file(pData); return SQLITE_NOMEM; }
     strcpy_s(pData->zName, nName, zName);
 
-    pData->nLength = 8192;
-    pData->pBuffer = malloc((size_t)(pData->nLength));
-    if (pData->pBuffer == NULL) { clear_file(pData); return SQLITE_NOMEM; }
+    pData->pChunks = (data_chunk*)malloc(sizeof(data_chunk));
+    if (pData->pChunks == NULL) { clear_file(pData); return SQLITE_NOMEM; }
+    pData->pChunks->nSize = CHUNK_BASE; pData->pChunks->pNext = NULL;
+    pData->pChunks->pBuffer = malloc((pData->pChunks->nSize));
+    if (pData->pChunks->pBuffer == NULL) { clear_file(pData); return SQLITE_NOMEM; }
 
     pData->pRefs = create_list(); // initialize file list
     if (pData->pRefs == NULL) { clear_file(pData); return SQLITE_NOMEM; }
@@ -46,20 +48,6 @@ memfs_file_data* find_file_data(sqlite3_vfs* pVfs, const char* zName)
 }
 
 
-int delete_file_data(memfs_file_data* pData)
-{
-    pData->iDeleted = 1;
-
-    pData->nSize = 0;
-    pData->nLength = 0;
-    if (pData->pBuffer != NULL)
-        free(pData->pBuffer);
-    pData->pBuffer = NULL;
-
-    return SQLITE_OK;
-}
-
-
 int destroy_file(memfs_file_data* pData)
 {
     if (pData != NULL)
@@ -74,9 +62,15 @@ int destroy_file(memfs_file_data* pData)
 
 void clear_file(memfs_file_data* pData)
 {
-    if (pData->pBuffer != NULL)
-        free(pData->pBuffer);
-    pData->pBuffer = NULL;
+    if (pData == NULL) return;
+
+    while (pData->pChunks != NULL)
+    {
+        data_chunk* pChunk = pData->pChunks;
+        pData->pChunks = pData->pChunks->pNext;
+        free(pChunk->pBuffer);
+        free(pChunk);
+    }
 
     if (pData->zName != NULL)
         free(pData->zName);
