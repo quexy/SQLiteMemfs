@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.SQLite;
+using System.Diagnostics;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -29,18 +30,8 @@ namespace SQLiteMemfs.Demo
 
                     CloneDatabase(memfs, "X:\\db2", "X:\\db3");
 
-                    const int msec = 1000;
-                    Console.WriteLine("Parallel Update...");
-                    using (var cancellation = new CancellationTokenSource(5 * msec))
-                    {
-                        var task1 = Task.Run(() => AlterData("X:\\db3", guid.Increase(2), cancellation.Token.WaitHandle));
-                        var task2 = Task.Run(() => AlterData("X:\\db3", guid.Increase(4), cancellation.Token.WaitHandle));
-
-                        try { Task.WaitAll(task1, task2); } catch { /* handle later */ }
-
-                        if (task1.IsFaulted) Console.WriteLine("AlterData (1) failed: {0}", task1.Exception);
-                        if (task2.IsFaulted) Console.WriteLine("AlterData (2) failed: {0}", task2.Exception);
-                    }
+                    ParallelUpdate(guid, "X:\\db1", "X:\\db2");
+                    ParallelUpdate(guid, "X:\\db3", "X:\\db3");
 
                     ReadData("X:\\db3");
                 }
@@ -86,7 +77,7 @@ namespace SQLiteMemfs.Demo
                     var len = memfsStream.Read(data, 0, amount);
                     if (len != amount) Console.WriteLine("did not read correct amount");
                     if (fileStream.Position != memfsStream.Position) Console.WriteLine("streams at different positions");
-                    Console.WriteLine("file: {0}; memfs: {1}", fileStream.Position, memfsStream.Position);
+                    //Console.WriteLine("file: {0}; memfs: {1}", fileStream.Position, memfsStream.Position);
                     for (int i = 0; i < Math.Min(len, amount); ++i)
                         if (buffer[i] != data[i]) Console.WriteLine("mismatch at position {0}", total + i);
 
@@ -165,7 +156,7 @@ namespace SQLiteMemfs.Demo
                     {
                         while (reader.Read())
                         {
-                            Console.WriteLine("| {0} | {1} | {2} |",
+                            Console.WriteLine("    | {0} | {1} | {2} |",
                                 reader.GetGuid(0),
                                 reader.GetString(1),
                                 Encoding.Unicode.GetString((byte[])reader.GetValue(2))
@@ -176,30 +167,55 @@ namespace SQLiteMemfs.Demo
             }
         }
 
+        const int msec = 1000;
         private static void AlterData(string dbFile, Guid guid, WaitHandle handle)
         {
-            Console.WriteLine("Alter data; id: {0}", guid);
-            var connStr = string.Format("Data Source={0};Version=3;FailIfMissing=True;ReadOnly=True;", dbFile);
-            using (var connection = new SQLiteConnection(connStr))
+            var sw = Stopwatch.StartNew();
+            try
             {
-                connection.Open();
-                using (var transaction = connection.BeginTransaction())
-                using (var command = connection.CreateCommand())
+                Console.WriteLine("Alter data; id: {0}", guid);
+                var connStr = string.Format("Data Source={0};Version=3;FailIfMissing=True;ReadOnly=True;", dbFile);
+                using (var connection = new SQLiteConnection(connStr))
                 {
-                    command.Transaction = transaction;
+                    connection.Open();
+                    using (var transaction = connection.BeginTransaction())
+                    using (var command = connection.CreateCommand())
+                    {
+                        command.Transaction = transaction;
 
-                    command.CommandText = "UPDATE stuff SET data=@data WHERE id=@id";
-                    command.Parameters.Add(new SQLiteParameter("@id", guid));
-                    var data = Encoding.Unicode.GetBytes("Changed".PadRight(10, ' '));
-                    command.Parameters.Add(new SQLiteParameter("@data", data));
+                        command.CommandText = "UPDATE stuff SET data=@data WHERE id=@id";
+                        command.Parameters.Add(new SQLiteParameter("@id", guid));
+                        var data = Encoding.Unicode.GetBytes("Changed".PadRight(10, ' '));
+                        command.Parameters.Add(new SQLiteParameter("@data", data));
 
-                    command.ExecuteNonQuery();
+                        command.ExecuteNonQuery();
 
-                    handle.WaitOne();
+                        Thread.Sleep(3 * msec);
+                        handle.WaitOne();
 
-                    transaction.Commit();
+                        transaction.Commit();
+                    }
+                    Console.WriteLine("    Data ({0}) changed", guid);
                 }
-                Console.WriteLine("    Data ({0}) changed", guid);
+            }
+            finally
+            {
+                Console.WriteLine("    Finished in {0}", sw.Elapsed);
+            }
+        }
+
+        private static void ParallelUpdate(Guid guid, string file1, string file2)
+        {
+            Console.WriteLine("Parallel Update...");
+            using (var cancellation = new CancellationTokenSource(5 * msec))
+            {
+                var task1 = Task.Run(() => AlterData(file1, guid.Increase(2), cancellation.Token.WaitHandle));
+                var task2 = Task.Run(() => AlterData(file2, guid.Increase(4), cancellation.Token.WaitHandle));
+
+                try { Task.WaitAll(task1, task2); } catch { /* handle later */ }
+
+                if (task1.IsFaulted) Console.WriteLine("AlterData (1) failed: {0}", task1.Exception);
+                if (task2.IsFaulted) Console.WriteLine("AlterData (2) failed: {0}", task2.Exception);
             }
         }
     }
