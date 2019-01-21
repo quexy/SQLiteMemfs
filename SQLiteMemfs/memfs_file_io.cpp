@@ -43,6 +43,8 @@ int memfs_io_Write(sqlite3_file* pFile, const void* pBuf, int iAmt, sqlite3_int6
 
     newSize = iOfst + iAmt;
     newLength = (sqlite3_int64)(newSize * 1.7);
+    if (newSize > RSIZE_MAX) return SQLITE_IOERR;
+    if (newLength > RSIZE_MAX) newLength = SIZE_MAX;
     if (pData->nLength < newSize)
     {
         void* newBuffer = (void*)malloc((size_t)newLength);

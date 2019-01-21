@@ -86,7 +86,8 @@ namespace System
             [System::Security::Permissions::SecurityPermission(System::Security::Permissions::SecurityAction::Assert, UnmanagedCode = true)]
             void MemfsStream::SetLength(Int64 value)
             {
-                memfs_setsize(ptr2str(filename), value);
+                bool success = memfs_setsize(ptr2str(filename), value);
+                if (!success) throw gcnew IOException("Resize failed");
             }
 
             [System::Security::Permissions::SecurityPermission(System::Security::Permissions::SecurityAction::Assert, UnmanagedCode = true)]

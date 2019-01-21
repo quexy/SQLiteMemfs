@@ -75,11 +75,34 @@ MEMFS_EXTERN __int64 memfs_getsize(const char* zName)
 }
 
 
-MEMFS_EXTERN void memfs_setsize(const char* zName, __int64 nSize)
+MEMFS_EXTERN bool memfs_setsize(const char* zName, __int64 nSize)
 {
     memfs_file_data* pData = find_file_data(get_vfs_object(), zName);
-    if (pData != NULL && pData->iDeleted == 0)
-        pData->nSize = nSize;
+    if (pData == NULL || pData->iDeleted == 1) return false;
+
+    // enlarge buffer if needed
+    if (pData->nLength <= nSize)
+    {
+        __int64 nBuf = nSize - pData->nLength;
+        if (nBuf > INT_MAX) return false;
+        void* pBuffer = malloc((size_t)nBuf);
+        if (pBuffer == NULL) return false;
+
+        memset(pBuffer, 0, (size_t)nBuf);
+        memfs_writedata(zName, pBuffer, (int)nBuf, pData->nLength);
+        free(pBuffer);
+    }
+
+    // do not disclose 
+    if (nSize > pData->nSize)
+    {
+        void* pGarbage = ((char*)pData->pBuffer) + pData->nSize;
+        memset(pGarbage, 0, (size_t)(nSize - pData->nSize));
+    }
+
+    if (nSize > 0) pData->nSize = nSize;
+    else /* zero */ pData->nSize = 0;
+    return true;
 }
 
 
